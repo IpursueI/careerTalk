@@ -19,3 +19,6 @@ class BaseItem(scrapy.Item):
     startTime = scrapy.Field()   # 宣讲会开始时间
     location = scrapy.Field()    # 宣讲会地点
     infoSource = scrapy.Field()  # 宣讲会信息来源
+
+class NJUItem(BaseItem):   #南京大学
+    infoDetail = scrapy.Field()  #宣讲会详细信息
