@@ -15,6 +15,7 @@ class CareertalkItem(scrapy.Item):
 
 class BaseItem(scrapy.Item):
     university = scrapy.Field()  # 学校名称
+    title = scrapy.Field()       # 宣讲会标题
     issueTime = scrapy.Field()   # 宣讲会消息发布时间
     startTime = scrapy.Field()   # 宣讲会开始时间
     location = scrapy.Field()    # 宣讲会地点
