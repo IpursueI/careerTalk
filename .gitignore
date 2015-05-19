@@ -1,2 +1,4 @@
 #doc
 *.xls
+*.pyc
+.idea/
