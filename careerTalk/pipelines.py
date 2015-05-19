@@ -42,7 +42,7 @@ class JsonPipeline(object):
     def close_spider(self,spider):
         self.file.close()
 
-        #记录spider的运行时间
+        #记录spider的新增项目
         fname = os.path.join(os.path.abspath(os.path.dirname(__file__)),"spiders/"+spider.name+"Done")
         f = codecs.open(fname, 'a', 'utf-8')
         for i in self.newItem:
