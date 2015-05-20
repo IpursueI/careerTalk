@@ -16,9 +16,9 @@ class SEUSpider(scrapy.Spider):
     allowed_domains = ["jy.seu.edu.cn"]
     start_urls = [
         "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=2&pageIndex=1",
-        "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=1"
+        "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=1&pageIndex=1"
     ]
-    # 未过期的摘要页面的链接
+    # 已过期的摘要页面的链接
     abs_page_url = "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=2"
     # 具体页面的链接
     detail_url= 'http://jy.seu.edu.cn/detach.portal?.pen=pe781&.pmn=view&action=oneView'
@@ -26,12 +26,20 @@ class SEUSpider(scrapy.Spider):
     link_pattern = re.compile(r'[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
 
     def parse(self, response):
-        # 包含内容的table
-        table = response.css('.portlet-table tr')
-        self.parse_item(table)
-        self.parse_next_page(response.body)
+        reqs = self.parse_item_s(response)
+        for req in reqs:
+            yield  req
+        # 解析后续页面的内容
+        next_urls = self.parse_next_page(response.body)
+        print '**********************'
+        for url in next_urls:
+            print '**********url:', url, '**********'
+            yield scrapy.Request(url, callback=self.parse)
 
-    def parse_item(self, selector_table):
+    def parse_item_s(self, response):
+        reqs = []
+        # 包含内容的table
+        selector_table = response.css('.portlet-table tr')
         # 需要解析的数据分布在对应的某一列
         dataSelectorDic = {
             'kind': 'td:nth-child(1)::text',
@@ -59,30 +67,31 @@ class SEUSpider(scrapy.Spider):
                     link = SEUSpider.detail_url+'&zphbh='+item_id[0]
                     item['link'] = link
                     item['sid'] = item_id[0]
-                    #yield scrapy.Request(link, callback=self.parse_detail_page, meta={'item': item})
+                    reqs.append(scrapy.Request(link, callback=self.parse_detail_page, meta={'item': item}))
                 else:
-                    pass
-                    #yield scrapy.Request(None, callback=self.parse_detail_page, meta={'item': item})
+                    reqs.append(scrapy.Request(None, callback=self.parse_detail_page, meta={'item': item}))
+        return reqs
 
     def parse_next_page(self, body):
         """
         获取下一个页面的链接
         :param value: 页面内容
-        :return: 解析得到的后续页面链接
+        :return: 解析得到的后续页面链接列表
         """
         # <a href="#" onclick="return turnPage('fpe781','6')" title="点击跳转到第6页">6</a>
         # <div title="当前页">3</div>
-        print "***************************************"
+        urls = []
         it = re.finditer(r"return turnPage\('.*','(\d*)'\)", body)
         curPage = re.search(r'<div title="当前页">(\d*)</div>',body)
         if curPage and it:
             pageInd = int(curPage.group(1))
             for m in it:
                 index = m.group(1)
-                print index, pageInd
-                # if int(index) < 4:
-                #     return SEUSpider.abs_page_url+"&pageIndex="+index
-        print "***************************************"
+                # print '*'*10, pageInd, index
+                if pageInd < int(index) < 4:
+                    url = SEUSpider.abs_page_url+"&pageIndex="+index
+                    urls.append(url)
+        return urls
 
     def parse_detail_page(self, response):
         item = response.meta['item']
