@@ -37,3 +37,6 @@ class SEUItem(BaseItem):
     targetAcademic = scrapy.Field()    # 目标学历
     targetMajor = scrapy.Field()    # 目标专业
 
+
+class NJUItem(BaseItem):   #南京大学
+    infoDetail = scrapy.Field()  #宣讲会详细信息

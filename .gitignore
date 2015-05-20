@@ -1,5 +1,6 @@
-#doc
 *.xls
 *.pyc
 .idea/
 *.xls#
+*.swp
+*.json~

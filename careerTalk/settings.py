@@ -13,5 +13,10 @@ BOT_NAME = 'careerTalk'
 SPIDER_MODULES = ['careerTalk.spiders']
 NEWSPIDER_MODULE = 'careerTalk.spiders'
 
+ITEM_PIPELINES = { 
+        'careerTalk.pipelines.ItemPipeline':300,
+        'careerTalk.pipelines.JsonPipeline':800,
+        }
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'

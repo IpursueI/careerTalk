@@ -1,5 +1,7 @@
 #-*- coding:utf-8 -*-
 
+import json
+
 class CustomUtil(object):
     
     @staticmethod
@@ -9,3 +11,9 @@ class CustomUtil(object):
         else:
             return li[idx].strip()
 
+    @staticmethod
+    def readLastTime(fileName, item):
+        f = file(fileName)
+        s = json.load(f)
+        f.close()
+        return s[item]
