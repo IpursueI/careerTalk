@@ -1,2 +1,5 @@
 # 将数据以json格式保存到items.json
 scrapy crawl SEU -o items.json -t json
+
+scrapy fetch --nolog --headers http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__/{'Referer':['http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__']}
+scrapy fetch --nolog --headers http://www.example.com/{'Accept-Ranges': ['bytes'], 'Age': ['1263 '], 'Connection': ['close '], 'Content-Length': ['596'], 'Content-Type': ['text/html; charset=UTF-8'], 'Date': ['Wed, 18 Aug 2010 23:59:46 GMT'], 'Etag': ['"573c1-254-48c9c87349680"'], 'Last-Modified': ['Fri, 30 Jul 2010 15:30:18 GMT'], 'Server': ['Apache/2.2.3 (CentOS)']}

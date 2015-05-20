@@ -9,14 +9,17 @@ from careerTalk import items
 import re
 
 
-class SEUSpider(scrapy.spider.Spider):
+class SEUSpider(scrapy.Spider):
     name = "SEU"
     university = u'东南大学'
     infoSource = u'东南大学就业信息网'
     allowed_domains = ["jy.seu.edu.cn"]
     start_urls = [
-        "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&pageIndex=1"
+        "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=2&pageIndex=1",
+        "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=1"
     ]
+    # 未过期的摘要页面的链接
+    abs_page_url = "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=2"
     # 具体页面的链接
     detail_url= 'http://jy.seu.edu.cn/detach.portal?.pen=pe781&.pmn=view&action=oneView'
     # 将正则表达式编译成Pattern对象
@@ -25,6 +28,10 @@ class SEUSpider(scrapy.spider.Spider):
     def parse(self, response):
         # 包含内容的table
         table = response.css('.portlet-table tr')
+        self.parse_item(table)
+        self.parse_next_page(response.body)
+
+    def parse_item(self, selector_table):
         # 需要解析的数据分布在对应的某一列
         dataSelectorDic = {
             'kind': 'td:nth-child(1)::text',
@@ -35,7 +42,7 @@ class SEUSpider(scrapy.spider.Spider):
         }
         linkCss = 'td:nth-child(6) a'
         # 解析每一行
-        for tr in table:
+        for tr in selector_table:
             item = items.SEUItem()
             item['university'] = SEUSpider.university
             item['infoSource'] = SEUSpider.infoSource
@@ -52,9 +59,30 @@ class SEUSpider(scrapy.spider.Spider):
                     link = SEUSpider.detail_url+'&zphbh='+item_id[0]
                     item['link'] = link
                     item['sid'] = item_id[0]
-                    yield scrapy.Request(link, callback=self.parse_detail_page, meta={'item': item})
+                    #yield scrapy.Request(link, callback=self.parse_detail_page, meta={'item': item})
                 else:
-                    yield scrapy.Request(None, callback=self.parse_detail_page, meta={'item': item})
+                    pass
+                    #yield scrapy.Request(None, callback=self.parse_detail_page, meta={'item': item})
+
+    def parse_next_page(self, body):
+        """
+        获取下一个页面的链接
+        :param value: 页面内容
+        :return: 解析得到的后续页面链接
+        """
+        # <a href="#" onclick="return turnPage('fpe781','6')" title="点击跳转到第6页">6</a>
+        # <div title="当前页">3</div>
+        print "***************************************"
+        it = re.finditer(r"return turnPage\('.*','(\d*)'\)", body)
+        curPage = re.search(r'<div title="当前页">(\d*)</div>',body)
+        if curPage and it:
+            pageInd = int(curPage.group(1))
+            for m in it:
+                index = m.group(1)
+                print index, pageInd
+                # if int(index) < 4:
+                #     return SEUSpider.abs_page_url+"&pageIndex="+index
+        print "***************************************"
 
     def parse_detail_page(self, response):
         item = response.meta['item']
@@ -65,12 +93,4 @@ class SEUSpider(scrapy.spider.Spider):
         print ta,tm
         if len(tm):
             item['targetMajor'] = tm[0]
-        # item['detailInfo'] = None
-        # return item
-        yield item
-        # yield scrapy.Request("http://jy.seu.edu.cn", callback=self.test)
-
-    def test(self, response):
-        item = items.BaseItem()
-        item['title'] = response.css('title::text').extract()[0]
         yield item
