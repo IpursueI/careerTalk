@@ -8,14 +8,13 @@ import scrapy
 from careerTalk import items
 import re
 from careerTalk.customUtil import CustomUtil
+from pyquery import PyQuery as pq
 chc = CustomUtil.convertHtmlContent
 gfs = CustomUtil.getFirstStr
 
 
 class BUAASpider(scrapy.Spider):
     name = "BUAA"
-    university = u'北京航空航天大学'
-    infoSource = u'北京航空航天大学就业信息网'
     allowed_domains = ["career.buaa.edu.cn"]
     start_urls = [
         "http://career.buaa.edu.cn/getJobfairAllInfoAction.dhtml?more=all&selectedNavigationName=RecruitmentInfoMain&selectedItem=jobFair&pageIndex=1"
@@ -27,29 +26,33 @@ class BUAASpider(scrapy.Spider):
     # 将正则表达式编译成Pattern对象
     link_pattern = re.compile(r'[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
 
-    def createItem(self, title, startTime, endTime, location, issueTime):
-        item = items.BUAAItem()
-        item['university'] = BUAASpider.university
-        item['infoSource'] = BUAASpider.infoSource
-        item['title'] = title
-        item['startTime'] = startTime
-        item['endTime'] = endTime
-        item['location'] = location
-        item['issueTime'] = issueTime
-        return item
-
     def parse(self, response):
         items = self.parse_items(response)
-        self.parse_next_pages(response)
-        return items
+        for item in items:
+            yield  item
+
+        urls = self.parse_next_pages(response)
+        for url in urls:
+            yield scrapy.Request(url, callback=self.parse)
 
     def parse_items(self, response):
+        print 'parse: '+response.url
         trs = response.css('.info_table tr')
         for tr in trs:
             title = tr.css(".info_left a::text").extract()
             sTime = tr.css('.csstime::text').extract()
             location = tr.css('.cssadress::text').extract()
             issueTime = tr.css('.info_right font ::text').extract()
+            tid = tr.css('.info_left a').re(BUAASpider.link_pattern)
+            tableType = tr.css('.info_left a').re(r'tabletype=careerTalk')
+
+            # 若url包含tabletype=careerTalk，则表示该item为宣讲会类型
+            # item中可能包含其他类型的，比如tabletype=jobFair，为双选会，这些直接跳过即可
+            if len(tableType)==0:
+                continue
+
+            # 提取id
+            tid = chc(tid)
 
             # 提取地点
             # 地点：如心会议中心大报告厅 --> 提取关键字
@@ -72,9 +75,81 @@ class BUAASpider(scrapy.Spider):
             if len(ts):
                 issueTime = ts[0]
 
-            yield self.createItem(chc(title), startTime, endTime, location, issueTime)
+            item = self.createItem(chc(title), startTime, endTime, location, issueTime)
+            if tid:
+                yield scrapy.Request(self.getDetailUrlById(tid), callback=self.parse_item_detail, meta={'item': item})
+
+    def parse_item_detail(self, response):
+        item = response.meta['item']
+        infoDetailRaw = response.css('.left_content').extract()
+
+        # 提取公司信息
+        cintro = response.css('.article_content .unit_content').extract()
+        cintro = CustomUtil.h2t(chc(cintro))
+
+        org_info_tds = response.css('.child_title td').extract()
+        contact_info = response.css('.contact_information td').extract()
+        infos = []
+        for td in org_info_tds:
+            t = pq(td).text()
+            infos.append(t)
+        for td in contact_info:
+            t = pq(td).text()
+            infos.append(t)
+        info_dic = {}
+        dkey = None
+        for i in range(len(infos)):
+            if i&1:
+                if dkey:
+                    info_dic[dkey] = infos[i].strip()
+            else:
+                dkey = infos[i].strip()
+        # for key in info_dic:
+        #     print key,info_dic[key]
+        cname = info_dic.get(u'公司名称：')
+        cpro = info_dic.get(u'公司性质：')
+        cscale = info_dic.get(u'公司规模：')
+        cind = info_dic.get(u'公司行业：')
+        cphone = info_dic.get(u'联系电话：')
+        chome = info_dic.get(u'公司主页：')
+        cemail = info_dic.get(u'招聘邮箱：')
+        caddr = info_dic.get(u'公司地址：')
+
+        company = items.CompanyItem(cname,
+                                    intro=cintro,
+                                    prop=cpro,
+                                    scale=cscale,
+                                    phone=cphone,
+                                    homePage=chome,
+                                    industry=cind,
+                                    email=cemail,
+                                    addr=caddr)
+        item['company'] = company
+        item['infoDetailRaw'] = infoDetailRaw
+        return item
 
     def parse_next_pages(self, response):
-        pass
-        # total_page = response.css('#\“total_page\”::text').extract()
-        # print 'totpage:', total_page
+        m = re.search('totalpage: (\d+)', response.body)
+        if m:
+            total_page = int(m.group(1))
+            for i in range(1, total_page):
+                yield self.getAbsUrlsByPage(i)
+
+    @classmethod
+    def getDetailUrlById(cls, tid):
+        return cls.detail_url+"&id="+tid
+
+    @classmethod
+    def getAbsUrlsByPage(cls, page):
+        return cls.abs_page_url+"&pageIndex=%d" % page
+
+    @staticmethod
+    def createItem(title, startTime, endTime, location, issueTime):
+        item = items.BUAAItem()
+        item['title'] = title
+        item['startTime'] = startTime
+        item['endTime'] = endTime
+        item['location'] = location
+        item['issueTime'] = issueTime
+        return item
+

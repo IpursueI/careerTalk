@@ -13,6 +13,9 @@ BOT_NAME = 'careerTalk'
 SPIDER_MODULES = ['careerTalk.spiders']
 NEWSPIDER_MODULE = 'careerTalk.spiders'
 
+# DOWNLOAD_DELAY = 0.5
+# CONCURRENT_REQUESTS_PER_DOMAIN = 6
+
 ITEM_PIPELINES = { 
         'careerTalk.pipelines.ItemPipeline':300,
         'careerTalk.pipelines.JsonPipeline':800,

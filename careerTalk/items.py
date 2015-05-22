@@ -34,6 +34,27 @@ class CompanyItem(scrapy.Item):
     scale = scrapy.Field()       #公司规模
     industry = scrapy.Field()    #公司性质
 
+    def __init__(self, name, intro=None, phone=None, email=None, homePage=None, addr=None, prop=None, scale=None, industry=None):
+        super(CompanyItem, self).__init__()
+        self['name'] = name
+        if intro:
+            self['introduction'] = intro
+        if phone:
+            self['phoneNumber'] = phone
+        if email:
+            self['email'] = email
+        if homePage:
+            self['homePage'] = homePage
+        if addr:
+            self['address'] = addr
+        if prop:
+            self['prop'] = prop
+        if scale:
+            self['scale'] = scale
+        if industry:
+            self['industry'] = industry
+
+
 
 # 东南大学
 class SEUItem(CareertalkItem):
@@ -56,6 +77,10 @@ class BUAAItem(CareertalkItem):
 
     endTime = scrapy.Field()
 
+    def __init__(self):
+        super(BUAAItem, self).__init__()
+        self['university'] = u'北京航空航天大学'
+        self['infoSource'] = u'北京航空航天大学就业信息网'
 
 
 class NJUItem(CareertalkItem):   #南京大学

@@ -2,6 +2,7 @@
 
 import json
 import re
+import html2text
 
 class CustomUtil(object):
     # 时间格式 2015-03-27 14:00
@@ -59,3 +60,11 @@ class CustomUtil(object):
         获取字符串中的日期
         """
         return cls.get_matchs(cls.date_pattern, text)
+
+    @classmethod
+    def h2t(cls, html):
+        if html:
+            ht = html2text.HTML2Text()
+            ht.ignore_links = True
+            return ht.handle(html)
+        return None

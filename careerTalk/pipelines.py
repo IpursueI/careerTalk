@@ -25,6 +25,11 @@ class ItemPipeline(object):
             return item
         if spider.name == 'SEU':
             return self.process_item_SEU(item, spider)
+        if item.get('company'):
+            item['company'] = dict(item['company'])
+        # todo需要删除
+        if item.get('infoDetailRaw'):
+            item['infoDetailRaw'] = None
         return item
 
     def process_item_SEU(self, item, spider):
@@ -36,7 +41,7 @@ class ItemPipeline(object):
 
 
 class JsonPipeline(object):
-
+    items = []
     def __init__(self):
         self.newItem = []
 
@@ -46,19 +51,20 @@ class JsonPipeline(object):
         if not os.path.exists(dir):
             os.mkdir(dir)
         self.file = codecs.open(fname, 'a', encoding='utf-8')
-        # self.file.write("[\n")
 
     def process_item(self, item, spider):
         if item.get('sid'):
             self.newItem.append(item['title']+"_"+item['sid'])
         else:
             self.newItem.append(item['title'])
-        line = json.dumps(dict(item), ensure_ascii=False) + "\n"
-        self.file.write(line)
+        # line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+        # self.file.write(line)
+        JsonPipeline.items.append(dict(item))
         return item
 
     def close_spider(self,spider):
-        # self.file.write("]")
+        line = json.dumps(JsonPipeline.items, ensure_ascii=False)
+        self.file.write(line)
         self.file.close()
 
         #记录spider的新增项目
