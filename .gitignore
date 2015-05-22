@@ -1,6 +1,7 @@
 *.xls
 *.pyc
 .idea/
+test/
 *.xls#
 *.swp
 *.json~

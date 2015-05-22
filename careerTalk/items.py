@@ -29,13 +29,20 @@ class SEUItem(BaseItem):
     kind = scrapy.Field()        # 宣讲会类型，这里按地点分类
     link = scrapy.Field()        # 相关连接
     sid = scrapy.Field()        # 宣讲会id
-    detailInfo = scrapy.Field()  # 详细信息
-    startDate = scrapy.Field()   # 宣讲日期
-    startTime = scrapy.Field()   # 宣讲时间
+    infoDetail = scrapy.Field()  # 详细信息
+    startTime_date = scrapy.Field()   # 宣讲日期
+    startTime_time = scrapy.Field()   # 宣讲时间
     sponsor = scrapy.Field()     # 主办方
+    absLink = scrapy.Field()     # 摘要页面的连接
 
     targetAcademic = scrapy.Field()    # 目标学历
     targetMajor = scrapy.Field()    # 目标专业
+
+
+# 北京航空航天大学
+class BUAAItem(BaseItem):
+    endTime = scrapy.Field()
+
 
 
 class NJUItem(BaseItem):   #南京大学

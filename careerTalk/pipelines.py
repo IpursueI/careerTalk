@@ -23,6 +23,17 @@ class ItemPipeline(object):
             h2t.ignore_links = True
             item['infoDetail'] = h2t.handle(chc(item['infoDetail']))
             return item
+        if spider.name == 'SEU':
+            return self.process_item_SEU(item, spider)
+        return item
+
+    def process_item_SEU(self, item, spider):
+        if item.get('targetMajor'):
+            item['targetMajor'] = chc(item['targetMajor'])
+        if item.get('targetAcademic'):
+            item['targetAcademic'] = chc(item['targetAcademic'])
+        return item
+
 
 class JsonPipeline(object):
 
@@ -30,20 +41,28 @@ class JsonPipeline(object):
         self.newItem = []
 
     def open_spider(self, spider):
-        self.file = codecs.open(spider.name+'.json','a',encoding='utf-8')
+        fname = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/data.json")
+        dir = os.path.dirname(fname)
+        if not os.path.exists(dir):
+            os.mkdir(dir)
+        self.file = codecs.open(fname, 'a', encoding='utf-8')
+        # self.file.write("[\n")
 
     def process_item(self, item, spider):
-        self.newItem.append(item['title'])
-
+        if item.get('sid'):
+            self.newItem.append(item['title']+"_"+item['sid'])
+        else:
+            self.newItem.append(item['title'])
         line = json.dumps(dict(item), ensure_ascii=False) + "\n"
         self.file.write(line)
         return item
 
     def close_spider(self,spider):
+        # self.file.write("]")
         self.file.close()
 
         #记录spider的新增项目
-        fname = os.path.join(os.path.abspath(os.path.dirname(__file__)),"spiders/"+spider.name+"Done")
+        fname = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/Done.md")
         f = codecs.open(fname, 'a', 'utf-8')
         for i in self.newItem:
             f.write(i+os.linesep)
