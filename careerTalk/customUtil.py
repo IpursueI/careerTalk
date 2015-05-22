@@ -6,10 +6,14 @@ class CustomUtil(object):
     
     @staticmethod
     def convertHtmlContent(li, idx=0):
-        if len(li) == 0:
-            return None
+        isString = isinstance(li, basestring)
+        if isString:
+            return li
         else:
-            return li[idx].strip()
+            if len(li) == 0:
+                return None
+            else:
+                return li[idx].strip()
 
     @staticmethod
     def readLastTime(fileName, item):

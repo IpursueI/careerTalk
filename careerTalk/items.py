@@ -23,3 +23,7 @@ class BaseItem(scrapy.Item):
 
 class NJUItem(BaseItem):   #南京大学
     infoDetail = scrapy.Field()  #宣讲会详细信息
+
+class NJUSTItem(BaseItem):  #南京理工大学
+    infoDetail = scrapy.Field()
+    companyInfo = scrapy.Field()

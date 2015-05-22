@@ -17,12 +17,30 @@ chc = CustomUtil.convertHtmlContent
 class ItemPipeline(object):
     def process_item(self, item, spider):
         if spider.name == "NJU":
+            item['university'] = chc(item['university'])
             item['title'] = chc(item['title'])
             item['issueTime'] = chc(item['issueTime'],1)
+            item['location'] = chc(item['location'])
+            item['startTime'] = chc(item['startTime'])
+            item['infoSource'] = chc(item['infoSource'])
             h2t = html2text.HTML2Text()
             h2t.ignore_links = True
             item['infoDetail'] = h2t.handle(chc(item['infoDetail']))
             return item
+        if spider.name == "NJUST":
+            h2t = html2text.HTML2Text()
+            h2t.ignore_links = True
+            h2t.ignore_images = True
+            item['university'] = chc(item['university'])
+            item['title'] = chc(item['title'])
+            item['location'] = chc(item['location'])
+            item['startTime'] = chc(item['startTime'])
+            item['infoSource'] = chc(item['infoSource'])
+            item['infoDetail'] = h2t.handle(chc(item['infoDetail']))
+            item['companyInfo'] = h2t.handle(chc(item['companyInfo']))
+
+            return item
+            
 
 class JsonPipeline(object):
 
