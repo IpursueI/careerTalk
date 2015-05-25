@@ -23,10 +23,15 @@ class ItemPipeline(object):
             item['location'] = chc(item['location'])
             item['startTime'] = chc(item['startTime'])
             item['infoSource'] = chc(item['infoSource'])
+            item['company']['name'] = chc(item['company']['name'])
+            item['company'] = dict(item['company']) 
             h2t = html2text.HTML2Text()
             h2t.ignore_links = True
-            item['infoDetail'] = h2t.handle(chc(item['infoDetail']))
+            item['infoDetailRaw'] = chc(item['infoDetailRaw'])
+            item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
+            item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             return item
+
         if spider.name == "NJUST":
             h2t = html2text.HTML2Text()
             h2t.ignore_links = True
