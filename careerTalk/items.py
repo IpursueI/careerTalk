@@ -33,4 +33,3 @@ class CompanyItem(scrapy.Item):
 
 class NJUItem(CareertalkItem):   #南京大学
     company = scrapy.Field()
-    

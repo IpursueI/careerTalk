@@ -6,6 +6,7 @@ import codecs
 from scrapy.contrib.spiders import CrawlSpider,Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from careerTalk.items import NJUItem
+from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
 
@@ -13,10 +14,6 @@ class NJUSpider(scrapy.Spider):
     name = "NJU"
     start_urls = ["http://job.nju.edu.cn/login/nju/home.jsp?type=zph&pageNow=1"]
     
-    rules = (
-            Rule(LinkExtractor(allow=(r'/home.jsp?type=zph&pageNow=\d+')), callback='parse'),
-            )
-
     def __init__(self, *args, **kwargs):
         super(NJUSpider, self).__init__(*args, **kwargs)
         NJUDone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"NJUDone")
@@ -48,5 +45,7 @@ class NJUSpider(scrapy.Spider):
     def parse_detail(self, response):
         item = response.meta['item']
         item['issueTime'] = response.xpath("//div[@class='article-info']").re(r'</span>*(.*)')
-        item['infoDetail'] = response.xpath("//table[@class='job_detail']").extract()
+        item['company'] = CompanyItem()
+        item['company']['name'] = item['issueTime'][0]
+        item['infoDetailRaw'] = response.xpath("//table[@class='job_detail']").extract()
         yield item 
