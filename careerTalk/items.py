@@ -89,9 +89,21 @@ class BITItem(CareertalkItem):
     endTime = scrapy.Field()
 
     def __init__(self):
-        super(BUAAItem, self).__init__()
-        self['university'] = u'北京理工大小'
+        super(BITItem, self).__init__()
+        self['university'] = u'北京理工大学'
         self['infoSource'] = u'北京理工大学就业信息网'
+
+
+# 中国人民大学
+class RUCItem(CareertalkItem):
+    company = scrapy.Field()
+
+    remark = scrapy.Field()
+
+    def __init__(self):
+        super(RUCItem, self).__init__()
+        self['university'] = u'中国人民大学'
+        self['infoSource'] = u'中国人民大学就业指导中心'
 
 
 class NJUItem(CareertalkItem):   #南京大学
