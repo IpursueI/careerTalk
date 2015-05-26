@@ -8,7 +8,7 @@ import re
 import time
 
 import scrapy
-from careerTalk import items
+from careerTalk.items import RUCItem
 from careerTalk.customUtil import CustomUtil, DoneSet
 from pyquery import PyQuery as pq
 
@@ -59,18 +59,19 @@ class RUCSpider(scrapy.Spider):
         remark = None
         startTime = None
         if len(infos) >= 3:
+            texts = [pq(infos[i]).text() for i in range(3)]
             # 时间：  2014/11/15 09:30
-            m = re.search(r'\d{4}/\d{2}/\d{2} \d{2}:\d{2}', infos[0])
+            m = re.search(r'\d{4}/\d{2}/\d{2} \d{2}:\d{2}', texts[0])
             if m:
-                startTime = m.group(1)
-                startTime = time.strptime(startTime, "%Y/%m/%d %H:%M:%S")
+                startTime = m.group()
+                startTime = time.strptime(startTime, "%Y/%m/%d %H:%M")
                 startTime = time.strftime(CustomUtil.time_format, startTime)
             # 地点：  世纪馆
-            m = re.search(ur'地点:(.*)')
+            m = re.search(ur'地点：(.*)', texts[1], re.X)
             if m:
                 location = m.group(1).strip()
             # 备注（要求）：  宣讲后会有面试，请同学们踊跃参加！
-            m = re.search(ur'备注（要求）：(.*)')
+            m = re.search(ur'备注（要求）：(.*)', texts[2], re.X)
             if m:
                 remark = m.group(1).strip()
         item['location'] = location
@@ -83,7 +84,7 @@ class RUCSpider(scrapy.Spider):
 
     @staticmethod
     def createItem(sid, title):
-        item = items.BUAAItem()
+        item = RUCItem()
         item['sid'] = sid
         item['title'] = title
         return item
