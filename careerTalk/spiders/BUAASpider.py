@@ -81,6 +81,7 @@ class BUAASpider(scrapy.Spider):
 
     def parse_item_detail(self, response):
         item = response.meta['item']
+        item['link'] = response.url
         infoDetailRaw = response.css('.left_content').extract()
 
         # 提取公司信息
@@ -125,7 +126,7 @@ class BUAASpider(scrapy.Spider):
                                     email=cemail,
                                     addr=caddr)
         item['company'] = company
-        item['infoDetailRaw'] = infoDetailRaw
+        item['infoDetailRaw'] = chc(infoDetailRaw)
         return item
 
     def parse_next_pages(self, response):

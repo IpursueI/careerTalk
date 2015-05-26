@@ -27,9 +27,9 @@ class ItemPipeline(object):
             return self.process_item_SEU(item, spider)
         if item.get('company'):
             item['company'] = dict(item['company'])
-        # todo需要删除
-        if item.get('infoDetailRaw'):
-            item['infoDetailRaw'] = None
+        # todo 需要删除
+        # if item.get('infoDetailRaw'):
+        #     item['infoDetailRaw'] = None
         return item
 
     def process_item_SEU(self, item, spider):
@@ -63,7 +63,7 @@ class JsonPipeline(object):
         return item
 
     def close_spider(self,spider):
-        line = json.dumps(JsonPipeline.items, ensure_ascii=False)
+        line = json.dumps(JsonPipeline.items, ensure_ascii=False, indent=4)
         self.file.write(line)
         self.file.close()
 

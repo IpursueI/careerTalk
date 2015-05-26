@@ -16,8 +16,9 @@ class CareertalkItem(scrapy.Item):
     startTime = scrapy.Field()   # 宣讲会开始时间  2015-05-15 18:30
     location = scrapy.Field()    # 宣讲会地点
     infoSource = scrapy.Field()  # 宣讲会信息来源
-    infoDetailText = scrapy.Field()  #宣讲会详细信息(纯文本)
-    infoDetailRaw = scrapy.Field()  #宣讲会原始详细信息(html)
+    infoDetailText = scrapy.Field()  # 宣讲会详细信息(纯文本)
+    infoDetailRaw = scrapy.Field()  # 宣讲会原始详细信息(html)
+    link = scrapy.Field()           # 宣讲会详细信息具体页面
 
 
 class CompanyItem(scrapy.Item):
@@ -59,7 +60,6 @@ class CompanyItem(scrapy.Item):
 # 东南大学
 class SEUItem(CareertalkItem):
     kind = scrapy.Field()        # 宣讲会类型，这里按地点分类
-    link = scrapy.Field()        # 相关连接
     sid = scrapy.Field()        # 宣讲会id
     infoDetail = scrapy.Field()  # 详细信息
     startTime_date = scrapy.Field()   # 宣讲日期
@@ -81,6 +81,18 @@ class BUAAItem(CareertalkItem):
         super(BUAAItem, self).__init__()
         self['university'] = u'北京航空航天大学'
         self['infoSource'] = u'北京航空航天大学就业信息网'
+
+
+# 北京理工大学
+class BITItem(CareertalkItem):
+    company = scrapy.Field()
+
+    endTime = scrapy.Field()
+
+    def __init__(self):
+        super(BUAAItem, self).__init__()
+        self['university'] = u'北京理工大小'
+        self['infoSource'] = u'北京理工大学就业信息网'
 
 
 class NJUItem(CareertalkItem):   #南京大学

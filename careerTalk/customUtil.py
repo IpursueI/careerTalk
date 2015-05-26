@@ -4,11 +4,12 @@ import json
 import re
 import html2text
 
+
 class CustomUtil(object):
     # 时间格式 2015-03-27 14:00
-    time_pattern = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})')
+    time_pattern = r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})'
     # 日期格式 2015-03-24
-    date_pattern = re.compile(r'(\d{4}-\d{2}-\d{2})')
+    date_pattern = r'(\d{4}-\d{2}-\d{2})'
     
     @staticmethod
     def convertHtmlContent(li, idx=0):
