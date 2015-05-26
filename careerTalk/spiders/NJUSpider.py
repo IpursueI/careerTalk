@@ -34,7 +34,7 @@ class NJUSpider(scrapy.Spider):
             item['startTime'] = item_t[1]+' '+item_t[2]
             item['infoSource'] = u"南京大学就业创业信息网"
             
-            if chc(item['title']) in self.Done:
+            if chc(item['title'])+' '+chc(item['startTime']) in self.Done:
                 continue
 
             url = response.url[:response.url.rindex('/')+1] + chc(sel.xpath("span[1]/a/@href").extract())
@@ -44,6 +44,7 @@ class NJUSpider(scrapy.Spider):
 
     def parse_detail(self, response):
         item = response.meta['item']
+        item['link'] = response.url
         item['issueTime'] = response.xpath("//div[@class='article-info']").re(r'</span>*(.*)')
         item['company'] = CompanyItem()
         item['company']['name'] = item['issueTime'][0]

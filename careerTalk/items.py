@@ -9,6 +9,7 @@ import scrapy
 
 
 class CareertalkItem(scrapy.Item):
+    link = scrapy.Field()
     title = scrapy.Field()       # 宣讲会标题
     university = scrapy.Field()  # 学校名称
     issueTime = scrapy.Field()   # 宣讲会消息发布时间
