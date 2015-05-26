@@ -49,7 +49,11 @@ class BITSpider(scrapy.Spider):
                 startTime = ts[0]
             if len(ts) >= 2:
                 endTime = ts[1]
-            item = self.createItem(title, startTime, endTime, location)
+            m = re.search(r'tx_extevent_pi1%5Buid%5D=(\d+)', url)
+            sid = None
+            if m:
+                sid = m.group(1)
+            item = self.createItem(sid, title, startTime, endTime, location)
             if url:
                 yield scrapy.Request(url, callback=self.parse_item_detail, meta={'item': item})
 
@@ -72,8 +76,9 @@ class BITSpider(scrapy.Spider):
         return item
 
     @staticmethod
-    def createItem(title, startTime, endTime, location):
+    def createItem(sid, title, startTime, endTime, location):
         item = items.BUAAItem()
+        item['sid'] = sid
         item['title'] = title
         item['startTime'] = startTime
         item['endTime'] = endTime

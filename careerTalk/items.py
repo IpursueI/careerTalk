@@ -19,6 +19,7 @@ class CareertalkItem(scrapy.Item):
     infoDetailText = scrapy.Field()  # 宣讲会详细信息(纯文本)
     infoDetailRaw = scrapy.Field()  # 宣讲会原始详细信息(html)
     link = scrapy.Field()           # 宣讲会详细信息具体页面
+    sid = scrapy.Field()        # 宣讲会源id
 
 
 class CompanyItem(scrapy.Item):
@@ -56,11 +57,9 @@ class CompanyItem(scrapy.Item):
             self['industry'] = industry
 
 
-
 # 东南大学
 class SEUItem(CareertalkItem):
     kind = scrapy.Field()        # 宣讲会类型，这里按地点分类
-    sid = scrapy.Field()        # 宣讲会id
     infoDetail = scrapy.Field()  # 详细信息
     startTime_date = scrapy.Field()   # 宣讲日期
     startTime_time = scrapy.Field()   # 宣讲时间

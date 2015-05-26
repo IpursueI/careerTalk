@@ -75,7 +75,7 @@ class BUAASpider(scrapy.Spider):
             if len(ts):
                 issueTime = ts[0]
 
-            item = self.createItem(chc(title), startTime, endTime, location, issueTime)
+            item = self.createItem(tid, chc(title), startTime, endTime, location, issueTime)
             if tid:
                 yield scrapy.Request(self.getDetailUrlById(tid), callback=self.parse_item_detail, meta={'item': item})
 
@@ -145,8 +145,9 @@ class BUAASpider(scrapy.Spider):
         return cls.abs_page_url+"&pageIndex=%d" % page
 
     @staticmethod
-    def createItem(title, startTime, endTime, location, issueTime):
+    def createItem(sid, title, startTime, endTime, location, issueTime):
         item = items.BUAAItem()
+        item['sid'] = sid
         item['title'] = title
         item['startTime'] = startTime
         item['endTime'] = endTime
