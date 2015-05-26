@@ -7,7 +7,7 @@ __author__ = 'phk'
 import scrapy
 from careerTalk import items
 import re
-from careerTalk.customUtil import CustomUtil
+from careerTalk.customUtil import CustomUtil,DoneSet
 from pyquery import PyQuery as pq
 chc = CustomUtil.convertHtmlContent
 gfs = CustomUtil.getFirstStr
@@ -36,7 +36,7 @@ class BUAASpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.parse)
 
     def parse_items(self, response):
-        print 'parse: '+response.url
+        # print 'parse: '+response.url
         trs = response.css('.info_table tr')
         for tr in trs:
             title = tr.css(".info_left a::text").extract()
@@ -76,8 +76,12 @@ class BUAASpider(scrapy.Spider):
                 issueTime = ts[0]
 
             item = self.createItem(tid, chc(title), startTime, endTime, location, issueTime)
-            if tid:
-                yield scrapy.Request(self.getDetailUrlById(tid), callback=self.parse_item_detail, meta={'item': item})
+            url = self.getDetailUrlById(tid)
+            if self.isNeedToParseDetail(url, item):
+                yield scrapy.Request(url, callback=self.parse_item_detail, meta={'item': item})
+
+    def isNeedToParseDetail(self, url, item):
+        return url and not DoneSet.isInDoneSet(self, item)
 
     def parse_item_detail(self, response):
         item = response.meta['item']
