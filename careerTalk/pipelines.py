@@ -10,7 +10,7 @@ import html2text
 import json
 import codecs
 import os
-from careerTalk.customUtil import CustomUtil
+from careerTalk.customUtil import CustomUtil, DoneSet
 chc = CustomUtil.convertHtmlContent
 
 
@@ -41,9 +41,9 @@ class ItemPipeline(object):
 
 
 class JsonPipeline(object):
-    items = []
     def __init__(self):
-        self.newItem = []
+        self.itemIds = []
+        self.file = None
 
     def open_spider(self, spider):
         fname = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/data.json")
@@ -53,24 +53,13 @@ class JsonPipeline(object):
         self.file = codecs.open(fname, 'a', encoding='utf-8')
 
     def process_item(self, item, spider):
-        if item.get('sid'):
-            self.newItem.append(item['title']+"_"+item['sid'])
-        else:
-            self.newItem.append(item['title'])
-        # line = json.dumps(dict(item), ensure_ascii=False) + "\n"
-        # self.file.write(line)
-        JsonPipeline.items.append(dict(item))
+        self.itemIds.append(DoneSet.getItemId(spider, item))
+
+        line = json.dumps(dict(item), ensure_ascii=False, indent=4) + "\n,"
+        self.file.write(line)
         return item
 
-    def close_spider(self,spider):
-        line = json.dumps(JsonPipeline.items, ensure_ascii=False, indent=4)
-        self.file.write(line)
+    def close_spider(self, spider):
         self.file.close()
-
-        #记录spider的新增项目
-        fname = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/Done.md")
-        f = codecs.open(fname, 'a', 'utf-8')
-        for i in self.newItem:
-            f.write(i+os.linesep)
-        f.close()
+        DoneSet.createDoneFile(spider, self.itemIds)
 
