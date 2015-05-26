@@ -9,7 +9,7 @@ import json
 
 import scrapy
 from careerTalk import items
-from careerTalk.customUtil import CustomUtil
+from careerTalk.customUtil import CustomUtil, DoneSet
 from pyquery import PyQuery as pq
 
 chc = CustomUtil.convertHtmlContent
@@ -54,8 +54,11 @@ class BITSpider(scrapy.Spider):
             if m:
                 sid = m.group(1)
             item = self.createItem(sid, title, startTime, endTime, location)
-            if url:
+            if self.isNeedToParseDetail(url, item):
                 yield scrapy.Request(url, callback=self.parse_item_detail, meta={'item': item})
+
+    def isNeedToParseDetail(self, url, item):
+        return url and not DoneSet.isInDoneSet(self, item)
 
     def parse_item_detail(self, response):
         item = response.meta['item']

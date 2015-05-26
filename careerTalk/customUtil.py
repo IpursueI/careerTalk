@@ -82,15 +82,17 @@ class DoneSet(object):
 
     @classmethod
     def getSet(cls, spider):
-        key = spider.get('name')
+        key = spider.name
         if not key:
-            log.ERROR(spider.__name__ + u' 尚未设置spider.name，获取doneset失败')
+            log.msg(spider.__name__ + u' 尚未设置spider.name，获取doneset失败', level=log.ERROR, spider=spider)
             return None
-        val = cls.datasets.get(key)
-        if val:
+        val = cls.doneSets.get(key)
+        if val is not None:
             return val
         else:
-            return cls.createSetByDoneFile(spider)
+            s = cls.createSetByDoneFile(spider)
+            cls.doneSets[key] = s
+            return s
 
     @classmethod
     def createSetByDoneFile(cls, spider):
@@ -108,7 +110,7 @@ class DoneSet(object):
                 doneset.add(line.strip())
             f.close()
         except:
-            log.ERROR(u'读取'+filePath+u'失败')
+            log.msg(u'读取'+filePath+u'失败', level=log.WARNING, spider=spider)
         return doneset
 
     @classmethod
@@ -136,7 +138,7 @@ class DoneSet(object):
         elif title and startTime:
             return startTime+'_'+title
         else:
-            log.WARNING('can not get the itemId , item:'+str(item))
+            log.msg('can not get the itemId , item:'+str(item), level=log.WARNING, spider=spider)
             return item.__hash__
 
     @classmethod
@@ -149,10 +151,14 @@ class DoneSet(object):
         for key in keys:
             file.write(key+os.linesep)
         file.close()
+        if len(keys):
+            log.msg((spider.name+u'新添加了%d个数据,起始点为 '+keys[0]) % len(keys), level=log.INFO, spider=spider)
+        else:
+            log.msg(spider.name+u'未添加新数据', level=log.INFO, spider=spider)
         return filePath
 
 
     @classmethod
     def getDonFilePath(cls, spider):
-        return os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/Done")
+        return os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/Done.txt")
 
