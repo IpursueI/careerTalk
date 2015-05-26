@@ -11,6 +11,7 @@ from scrapy import log
 class CustomUtil(object):
     # 时间格式 2015-03-27 14:00
     time_pattern = r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})'
+    time_format = "%Y-%m-%d %H:%M"
     # 日期格式 2015-03-24
     date_pattern = r'(\d{4}-\d{2}-\d{2})'
     
