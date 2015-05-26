@@ -17,6 +17,8 @@ class CareertalkItem(scrapy.Item):
     infoSource = scrapy.Field()  # 宣讲会信息来源
     infoDetailText = scrapy.Field()  #宣讲会详细信息(纯文本)
     infoDetailRaw = scrapy.Field()  #宣讲会原始详细信息(html)
+    image_urls = scrapy.Field()
+    images = scrapy.Field()
 
 class CompanyItem(scrapy.Item):
     name = scrapy.Field()
@@ -33,7 +35,6 @@ class CompanyItem(scrapy.Item):
 class NJUItem(CareertalkItem):   #南京大学
     company = scrapy.Field()
 
-class NJUSTItem(BaseItem):  #南京理工大学
-    infoDetail = scrapy.Field()
-    companyInfo = scrapy.Field()
+class NJUSTItem(CareertalkItem):  #南京理工大学
+    company = scrapy.Field()
 

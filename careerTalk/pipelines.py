@@ -10,6 +10,9 @@ import html2text
 import json
 import codecs
 import os
+from scrapy.contrib.pipeline.images import ImagesPipeline
+from scrapy.http import Request
+from scrapy.exceptions import DropItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
 
@@ -41,8 +44,11 @@ class ItemPipeline(object):
             item['location'] = chc(item['location'])
             item['startTime'] = chc(item['startTime'])
             item['infoSource'] = chc(item['infoSource'])
-            item['infoDetail'] = h2t.handle(chc(item['infoDetail']))
-            item['companyInfo'] = h2t.handle(chc(item['companyInfo']))
+            item['infoDetailRaw'] = chc(item['infoDetailRaw'])
+            item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
+            item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
+            item['company'] = dict(item['company']) 
 
             return item
             
@@ -56,9 +62,9 @@ class JsonPipeline(object):
         self.file = codecs.open(spider.name+'.json','a',encoding='utf-8')
 
     def process_item(self, item, spider):
-        self.newItem.append(item['title'])
+        self.newItem.append(item['title']+' '+item['startTime'])
 
-        line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+        line = json.dumps(dict(item), ensure_ascii=False, indent=4) + "\n"
         self.file.write(line)
         return item
 
@@ -71,4 +77,20 @@ class JsonPipeline(object):
         for i in self.newItem:
             f.write(i+os.linesep)
         f.close()
+
+
+class MyImagesPipeline(ImagesPipeline):
+    def file_path(self, request, response=None, info=None):
+        image_guid = request.url.split('/')[-1]
+        return 'full/%s' % (image_guid)
+
+    def get_media_request(self, item, info):
+        for image_url in item['image_urls']:
+            yield Request(image_url)
+
+    def item_completed(self, results, item, info):
+        image_path = [x['path'] for ok,x in results if ok]
+        if not image_path:
+            raise DropItem("Item contains no images")
+        return item
 

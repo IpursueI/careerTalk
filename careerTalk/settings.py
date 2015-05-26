@@ -16,7 +16,10 @@ NEWSPIDER_MODULE = 'careerTalk.spiders'
 ITEM_PIPELINES = { 
         'careerTalk.pipelines.ItemPipeline':300,
         'careerTalk.pipelines.JsonPipeline':800,
+        'careerTalk.pipelines.MyImagesPipeline':850,
         }
 
+DOWNLOAD_TIMEOUT = 15
+IMAGES_STORE = '/home/captain/文档/program/python/careerTalk/picture'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'
