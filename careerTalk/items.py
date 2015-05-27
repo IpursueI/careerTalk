@@ -130,6 +130,18 @@ class PKUItem(CareertalkItem):
         self['infoSource'] = u'北京大学学生就业指导服务中心'
 
 
+# 上海理工大学
+class USSTItem(CareertalkItem):
+    company = scrapy.Field()
+
+    endTime = scrapy.Field()
+
+    def __init__(self):
+        super(USSTItem, self).__init__()
+        self['university'] = u'上海理工大学'
+        self['infoSource'] = u'上海理工大学就业信息服务网'
+
+
 class NJUItem(CareertalkItem):   #南京大学
     university = scrapy.Field()  #宣讲会详细信息
     company = scrapy.Field()
