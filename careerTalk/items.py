@@ -106,6 +106,17 @@ class RUCItem(CareertalkItem):
         self['infoSource'] = u'中国人民大学就业指导中心'
 
 
+# 清华大学
+class THItem(CareertalkItem):
+    company = scrapy.Field()
+
+    endTime = scrapy.Field()
+
+    def __init__(self):
+        super(THItem, self).__init__()
+        self['university'] = u'清华大学'
+        self['infoSource'] = u'清华大学学生职业发展指导中心'
+
 class NJUItem(CareertalkItem):   #南京大学
     university = scrapy.Field()  #宣讲会详细信息
     company = scrapy.Field()
