@@ -13,6 +13,7 @@ BOT_NAME = 'careerTalk'
 SPIDER_MODULES = ['careerTalk.spiders']
 NEWSPIDER_MODULE = 'careerTalk.spiders'
 
+# COOKIES_ENABLES = False
 # DOWNLOAD_DELAY = 0.5
 # CONCURRENT_REQUESTS_PER_DOMAIN = 6
 
@@ -22,4 +23,10 @@ ITEM_PIPELINES = {
         }
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'
+# USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'
+
+# 取消默认的useragent,使用新的useragent
+# DOWNLOADER_MIDDLEWARES = {
+#         'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
+#         'careerTalk.useragent.RotateUserAgentMiddleware': 400
+# }
