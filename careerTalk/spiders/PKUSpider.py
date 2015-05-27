@@ -50,7 +50,7 @@ class PKUSpider(scrapy.Spider):
         fairDate = None
         for data in jdatas:
             # print fairDate
-            print data['title'],data['fairDate']
+            # print data['title'],data['fairDate']
             fairDate = data.get('fairDate', fairDate)
             # {"id":"ff8080814a7d39f9014acc5939e1005f","title":"江苏省关于2015年应届优秀大学毕业生选调工作的通知 ","fairDate":"2015-01-13 16:30","startTime":"16:30","endTime":"18:30","startDay":"01月13日","lastUpdate":"2015年01月09日","fairCategory":"jobfair","isStatic":1,"location":"新太阳学生中心212室"}
             # 如果是宣讲会类型
