@@ -6,6 +6,7 @@ import html2text
 import os
 import codecs
 from scrapy import log
+import time
 
 
 class CustomUtil(object):
@@ -17,7 +18,7 @@ class CustomUtil(object):
     
     @staticmethod
     def convertHtmlContent(li, idx=0):
-        if len(li) == 0:
+        if li is None or len(li) == 0:
             return None
         else:
             return li[idx].strip()
@@ -58,6 +59,15 @@ class CustomUtil(object):
         获取字符串中的时间
         """
         return cls.get_matchs(cls.time_pattern, text)
+
+    @classmethod
+    def formatTime(cls, time_str):
+        t_format = r"\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}"
+        if re.match(t_format, time_str):
+            timeArray = time.strptime(time_str, "%Y-%m-%d %H:%M")
+            format_time = time.strftime(cls.time_format, timeArray)
+            return format_time
+        return time_str
 
     @classmethod
     def get_date(cls, text):
@@ -157,7 +167,6 @@ class DoneSet(object):
         else:
             log.msg(spider.name+u'未添加新数据', level=log.INFO, spider=spider)
         return filePath
-
 
     @classmethod
     def getDonFilePath(cls, spider):
