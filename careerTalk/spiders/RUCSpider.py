@@ -20,6 +20,9 @@ class RUCSpider(scrapy.Spider):
     name = "RUC"
     allowed_domains = ["career.ruc.edu.cn"]
 
+    # 设置下载延时
+    download_delay = 0.5
+
     # 可以通过该url直接获取到所有的数据,但数据是按id排列，而id与创建时间之间的关系并不明确
     start_urls = [
         "http://career.ruc.edu.cn/news.asp"
