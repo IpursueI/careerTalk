@@ -80,7 +80,7 @@ class BITSpider(scrapy.Spider):
 
     @staticmethod
     def createItem(sid, title, startTime, endTime, location):
-        item = items.BUAAItem()
+        item = items.BITItem()
         item['sid'] = sid
         item['title'] = title
         item['startTime'] = startTime
