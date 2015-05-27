@@ -9,6 +9,7 @@ import scrapy
 
 
 class CareertalkItem(scrapy.Item):
+    sid = scrapy.Field()
     link = scrapy.Field()
     title = scrapy.Field()       # 宣讲会标题
     university = scrapy.Field()  # 学校名称
@@ -37,5 +38,8 @@ class NJUItem(CareertalkItem):   #南京大学
     company = scrapy.Field()
 
 class NJUSTItem(CareertalkItem):  #南京理工大学
+    company = scrapy.Field()
+
+class ZJGSUItem(CareertalkItem):  #浙江工商大学
     company = scrapy.Field()
 

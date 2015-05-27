@@ -11,7 +11,7 @@ class CustomUtil(object):
             return li
         else:
             if len(li) == 0:
-                return None
+                return ""
             else:
                 return li[idx].strip()
 

@@ -19,6 +19,10 @@ chc = CustomUtil.convertHtmlContent
 
 class ItemPipeline(object):
     def process_item(self, item, spider):
+        h2t = html2text.HTML2Text()
+        h2t.ignore_links = True
+        h2t.ignore_images = True
+
         if spider.name == "NJU":
             item['university'] = chc(item['university'])
             item['title'] = chc(item['title'])
@@ -28,17 +32,12 @@ class ItemPipeline(object):
             item['infoSource'] = chc(item['infoSource'])
             item['company']['name'] = chc(item['company']['name'])
             item['company'] = dict(item['company']) 
-            h2t = html2text.HTML2Text()
-            h2t.ignore_links = True
             item['infoDetailRaw'] = chc(item['infoDetailRaw'])
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             return item
 
         if spider.name == "NJUST":
-            h2t = html2text.HTML2Text()
-            h2t.ignore_links = True
-            h2t.ignore_images = True
             item['university'] = chc(item['university'])
             item['title'] = chc(item['title'])
             item['location'] = chc(item['location'])
@@ -51,6 +50,16 @@ class ItemPipeline(object):
             item['company'] = dict(item['company']) 
 
             return item
+
+        if spider.name == "ZJGSU":
+            item['company']['name'] = h2t.handle(chc(item['company']['name'])).replace('*','').strip()
+            item['company'] = dict(item['company']) 
+            item['startTime'] = h2t.handle(item['startTime']).replace('*','').strip()
+            item['location'] = h2t.handle(chc(item['location'])).replace('*','').strip()
+            item['infoDetailRaw'] = chc(item['infoDetailRaw'])
+            item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
+            item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            return item
             
 
 class JsonPipeline(object):
@@ -62,7 +71,7 @@ class JsonPipeline(object):
         self.file = codecs.open(spider.name+'.json','a',encoding='utf-8')
 
     def process_item(self, item, spider):
-        self.newItem.append(item['title']+' '+item['startTime'])
+        self.newItem.append(item['title']+'_'+item['sid'])
 
         line = json.dumps(dict(item), ensure_ascii=False, indent=4) + "\n"
         self.file.write(line)
