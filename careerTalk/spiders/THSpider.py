@@ -50,7 +50,7 @@ class THSpider(scrapy.Spider):
         # ([{"rq":"20150505","zphid":"1506020626","sfzb":"否","jssj":"21:00","kssj":"19:00","cdmcqc":"二教会议室","fblx":"专场","bt":"美的集团家用空调事业部-博士座谈会"}])
         body = response.body
         datas = json.loads(body[1:-1])
-        print datas
+        # print datas
         for data in datas:
             sid = data['zphid']
             startTime = data['rq']+data['kssj']
