@@ -12,12 +12,12 @@ from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
 
-class NJUSpider(scrapy.Spider):
+class ZJGSUSpider(scrapy.Spider):
     name = "ZJGSU"
     start_urls = ["http://jyw.zjgsu.edu.cn/Articlelist.asp?nid=24&me_page=1"]
     
     def __init__(self, *args, **kwargs):
-        super(NJUSpider, self).__init__(*args, **kwargs)
+        super(ZJGSUSpider, self).__init__(*args, **kwargs)
         NJUSTDone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"ZJGSUDone")
         self.Done = set()
         f = codecs.open(NJUSTDone,'r','utf-8')
@@ -36,7 +36,7 @@ class NJUSpider(scrapy.Spider):
             tmpData = sel.xpath("td[2]/a/text()").extract()[0]
             item['title'] = tmpData.split()[0]
             #self.get_date_location(tmpData, item)
-            item['infoSource'] = u"浙江工商大学"
+            item['infoSource'] = u"浙江工商大学毕业生就业信息网"
             item['issueTime'] = sel.xpath("td[3]/text()").extract()[0]
             detailUrl = chc(sel.xpath("td[2]/a/@href").extract())
             item['sid'] = detailUrl[detailUrl.index('=')+1:]
