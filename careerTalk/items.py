@@ -37,6 +37,9 @@ class CompanyItem(scrapy.Item):
 class NJUItem(CareertalkItem):   #南京大学
     company = scrapy.Field()
 
+class NUAAItem(CareertalkItem):   #南京航空航天大学
+    company = scrapy.Field()
+
 class NJUSTItem(CareertalkItem):  #南京理工大学
     company = scrapy.Field()
 
