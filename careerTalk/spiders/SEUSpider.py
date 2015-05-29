@@ -5,8 +5,12 @@
 __author__ = 'phk'
 
 import scrapy
-from careerTalk import items
+import time
+from careerTalk.items import SEUItem
+from careerTalk.customUtil import CustomUtil,DoneSet
 import re
+
+chc = CustomUtil.convertHtmlContent
 
 
 class SEUSpider(scrapy.Spider):
@@ -15,18 +19,16 @@ class SEUSpider(scrapy.Spider):
     遇到问题：get摘要页面的url时，有一定概率会返回详细页面，获取详细页面时，则有可能返回摘要页面，因此需要判断数据是否获取正常，如果数据异常，则进行多次尝试。
     """
     name = "SEU"
-    university = u'东南大学'
-    infoSource = u'东南大学就业信息网'
     allowed_domains = ["jy.seu.edu.cn"]
     start_urls = [
         # 历史数据
-        # "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=2&pageIndex=1",
+        "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=2&pageIndex=1",
 
         # 新数据
         "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&SFGQ=1&pageIndex=1"
     ]
     # 已过期的摘要页面的链接
-    abs_page_url = "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__"
+    abs_page_url = "http://jy.seu.edu.cn/detach.portal?.p=Znxjb20ud2lzY29tLnBvcnRhbC5jb250YWluZXIuY29yZS5pbXBsLlBvcnRsZXRFbnRpdHlXaW5kb3d8cGU3ODF8dmlld3xub3JtYWx8YWN0aW9uPXF1ZXJ5QWxsWnBoTWFuYWdlVmlldw__&zphbh="
     # 具体页面的链接
     detail_url= 'http://jy.seu.edu.cn/detach.portal?.pen=pe781&.pmn=view&action=oneView'
     # 将正则表达式编译成Pattern对象
@@ -52,7 +54,7 @@ class SEUSpider(scrapy.Spider):
         return cls.trySet.get(tid, 0) < 3
 
     def parse(self, response):
-        print "\ncurPage:", response.url.split("&")[1:]
+        # print "\ncurPage:", response.url.split("&")[1:]
         reqs = self.parse_item_s(response)
         # 如果获取的页面是招聘详情页，则不会有任何摘要信息，那么对当前页面进行重新抓取
         if len(reqs) == 0:
@@ -77,8 +79,6 @@ class SEUSpider(scrapy.Spider):
         for index in next_pages:
             url = SEUSpider.abs_page_url+("%s&pageIndex=%d" % (sfgq, index))
             yield scrapy.Request(url, callback=self.parse)
-        print 'nextPages:', next_pages
-        print
 
     def parse_item_s(self, response):
         reqs = []
@@ -88,35 +88,45 @@ class SEUSpider(scrapy.Spider):
         dataSelectorDic = {
             'kind': 'td:nth-child(1)::text',
             'location': 'td:nth-child(2)::text',
-            'startTime_date': 'td:nth-child(3)::text',
-            'startTime_time': 'td:nth-child(4)::text',
+            'date': 'td:nth-child(3)::text',
+            'dtime': 'td:nth-child(4)::text',
             'sponsor': 'td:nth-child(5) a::text',
             'title': 'td:nth-child(5) a::text'
         }
         linkCss = 'td:nth-child(6) a'
         # 解析每一行
         for tr in selector_table:
-            item = items.SEUItem()
-            item['university'] = SEUSpider.university
-            item['infoSource'] = SEUSpider.infoSource
+            info_dict = {}
             for key in dataSelectorDic.keys():
                 val = tr.css(dataSelectorDic[key]).extract()
                 # 表格头部并没有对应数据
                 if len(val) != 0:
-                    item[key] = val[0]
-            if item.get('kind') and item['kind'].__contains__(u'宣讲会'):
+                    info_dict[key] = chc(val)
+            if info_dict.get('kind') and info_dict['kind'].__contains__(u'宣讲会'):
                 # 获取具体连接
-                item_id = tr.css(linkCss).re(SEUSpider.link_pattern)
+                sid = chc(tr.css(linkCss).re(SEUSpider.link_pattern))
                 # 获取详细信息
-                if len(item_id) != 0:
-                    link = SEUSpider.detail_url+'&zphbh='+item_id[0]
-                    item['link'] = link
-                    item['absLink'] = response.url
-                    item['sid'] = item_id[0]
-                    reqs.append(scrapy.Request(link, callback=self.parse_detail_page, meta={'item': item}))
-                else:
-                    reqs.append(scrapy.Request(None, callback=self.parse_detail_page, meta={'item': item}))
+                if sid:
+                    url = self.createDetailUrl(sid)
+                    dts = CustomUtil.getFirstStr(info_dict['dtime'])
+                    date = info_dict['date']
+                    st,et = self.splitTimes(dts)
+                    startTime = None
+                    endTime = None
+                    if st:
+                        startTime = date+" "+st
+                        startTime = CustomUtil.formatTime(startTime)
+                    if et:
+                        endTime = date+" "+et;
+                        endTime = CustomUtil.formatTime(endTime)
+                    location = info_dict['location']
+                    item = self.createItem(sid, info_dict['title'], startTime, endTime, location, None)
+                    if self.isNeedToParseDetail(url, item):
+                        reqs.append(scrapy.Request(url, callback=self.parse_detail_page, meta={'item': item}))
         return reqs
+
+    def isNeedToParseDetail(self, url, item):
+        return url and not DoneSet.isInDoneSet(self, item)
 
     def parse_next_page(self, response):
         """
@@ -140,11 +150,12 @@ class SEUSpider(scrapy.Spider):
                 if curPage == index-1:
                 # if curPage < index:
                     nextPages.append(index)
-            print ("curPage:%s relPages:" % curPage), inds
+            # print ("curPage:%s relPages:" % curPage), inds
         return nextPages
 
     def parse_detail_page(self, response):
         item = response.meta['item']
+        item['link'] = response.url
         title = response.css('.w-employee-title')
         # 如果数据错误，则进行重试
         if not title:
@@ -163,3 +174,31 @@ class SEUSpider(scrapy.Spider):
         if len(tm):
             item['targetMajor'] = tm[0]
         yield item
+
+    @classmethod
+    def splitTimes(self, timeStr):
+        """
+        解析时间串，获取起始时间与结束时间
+        13:30—15:30
+        """
+        ss = timeStr.split(u'-')
+        st = ss[0]
+        et = None
+        if len(ss) >= 2:
+            et = ss[1]
+        return st, et,
+
+    @classmethod
+    def createDetailUrl(cls, sid):
+        return cls.detail_url+sid;
+
+    @staticmethod
+    def createItem(sid, title, startTime, endTime, location, issueTime):
+        item = SEUItem()
+        item['sid'] = sid
+        item['title'] = title
+        item['startTime'] = startTime
+        item['endTime'] = endTime
+        item['location'] = location
+        item['issueTime'] = issueTime
+        return item

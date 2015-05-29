@@ -60,14 +60,15 @@ class CompanyItem(scrapy.Item):
 # 东南大学
 class SEUItem(CareertalkItem):
     kind = scrapy.Field()        # 宣讲会类型，这里按地点分类
-    infoDetail = scrapy.Field()  # 详细信息
-    startTime_date = scrapy.Field()   # 宣讲日期
-    startTime_time = scrapy.Field()   # 宣讲时间
-    sponsor = scrapy.Field()     # 主办方
-    absLink = scrapy.Field()     # 摘要页面的连接
+    endTime = scrapy.Field()
 
     targetAcademic = scrapy.Field()    # 目标学历
     targetMajor = scrapy.Field()    # 目标专业
+
+    def __init__(self):
+        super(SEUItem, self).__init__()
+        self['university'] = u'东南大学'
+        self['infoSource'] = u'东南大学就业信息网'
 
 
 # 北京航空航天大学

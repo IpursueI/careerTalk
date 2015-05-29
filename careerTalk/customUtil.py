@@ -167,7 +167,7 @@ class DoneSet(object):
             os.mkdir(dir)
         file = codecs.open(filePath, 'a', encoding='utf-8')
         for key in keys:
-            print key
+            # print key
             file.write(key+os.linesep)
         file.close()
         if len(keys):
