@@ -11,6 +11,7 @@ import json
 import codecs
 import os
 from careerTalk.customUtil import CustomUtil, DoneSet
+from scrapy.exceptions import DropItem
 chc = CustomUtil.convertHtmlContent
 
 
@@ -30,6 +31,13 @@ class ItemPipeline(object):
         # todo 需要删除
         # if item.get('infoDetailRaw'):
         #     item['infoDetailRaw'] = None
+
+        # 如果标题为空，则采用公司名替换，若公司名也不存在，则直接抛弃
+        if not item.get('title'):
+            if item.get('company') and item.get('company').get('name'):
+                item['title'] = item['company']['name']
+            else:
+                raise DropItem("Missing title and companyName in %s" % item)
         return item
 
     def process_item_SEU(self, item, spider):

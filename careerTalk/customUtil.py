@@ -69,6 +69,13 @@ class CustomUtil(object):
             return format_time
         return time_str
 
+
+    @classmethod
+    def strip(cls, str):
+        if isinstance(str, basestring):
+            return str.strip()
+        return str
+
     @classmethod
     def get_date(cls, text):
         """
@@ -144,13 +151,13 @@ class DoneSet(object):
         sid = item.get('sid')
         title = item.get('title')
         startTime = item.get('startTime')
-        if title and sid:
+        if sid:
             return sid+'_'+title
         elif title and startTime:
             return startTime+'_'+title
         else:
             log.msg('can not get the itemId , item:'+str(item), level=log.WARNING, spider=spider)
-            return item.__hash__
+            return item.__hash__()
 
     @classmethod
     def createDoneFile(cls, spider, keys):
@@ -160,6 +167,7 @@ class DoneSet(object):
             os.mkdir(dir)
         file = codecs.open(filePath, 'a', encoding='utf-8')
         for key in keys:
+            print key
             file.write(key+os.linesep)
         file.close()
         if len(keys):
