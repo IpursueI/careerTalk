@@ -93,6 +93,20 @@ class ItemPipeline(object):
 
             return item
 
+        if spider.name == "CAA":
+            item['university'] = chc(item['university'])
+            item['title'] = chc(item['title'])
+            item['location'] = chc(item['location'])
+            item['startTime'] = chc(item['startTime'])
+            item['infoSource'] = chc(item['infoSource'])
+            item['infoDetailRaw'] = chc(item['infoDetailRaw'])
+            item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
+            item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
+            item['company'] = dict(item['company']) 
+
+            return item
+
 class JsonPipeline(object):
 
     def __init__(self):
