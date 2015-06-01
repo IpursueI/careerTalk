@@ -91,6 +91,42 @@ class CustomUtil(object):
             return ht.handle(html)
         return None
 
+    @classmethod
+    def splitTimes(cls, timeStr):
+        """
+        解析时间串，获取起始时间与结束时间
+        2015-4-21 13:30—15:30
+        """
+        timeStr = timeStr.strip()
+        # 替换中文空格
+        timeStr = timeStr.replace(u'\xa0', ' ')
+        # 替换空白字符
+        timeStr = timeStr.replace('\r', ' ')
+        # 替换中文冒号
+        timeStr = timeStr.replace(u'：', ':')
+        # 替换中文破折号
+        timeStr = timeStr.replace(u'——', '-')
+        timeStr = timeStr.replace(u'—', '-')
+        timeStr = timeStr.replace(u'\u2014', '-')
+
+        t_format = r"(\d{4}-\d{1,2}-\d{1,2})\s+(\d{1,2}:\d{1,2})[-|\s|~]*(\d{1,2}:\d{1,2})?"
+        st = None
+        et = None
+
+        m = re.search(t_format, timeStr)
+        if m:
+            date = m.group(1)
+            tst = m.group(2)
+            tet = m.group(3)
+            if date:
+                if tst:
+                    st = time.strptime(date+' '+tst, CustomUtil.time_format)
+                    st = time.strftime(CustomUtil.time_format, st)
+                if tet:
+                    et = time.strptime(date+' '+tet, CustomUtil.time_format)
+                    et = time.strftime(CustomUtil.time_format, et)
+        return st, et,
+
 
 class DoneSet(object):
     """

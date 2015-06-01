@@ -110,7 +110,7 @@ class SEUSpider(scrapy.Spider):
                     url = self.createDetailUrl(sid)
                     dts = CustomUtil.getFirstStr(info_dict['dtime'])
                     date = info_dict['date']
-                    st,et = self.splitTimes(dts)
+                    st, et = CustomUtil.splitTimes(date + " " + dts)
                     startTime = None
                     endTime = None
                     if st:
@@ -174,19 +174,6 @@ class SEUSpider(scrapy.Spider):
         if len(tm):
             item['targetMajor'] = tm[0]
         yield item
-
-    @classmethod
-    def splitTimes(self, timeStr):
-        """
-        解析时间串，获取起始时间与结束时间
-        13:30—15:30
-        """
-        ss = timeStr.split(u'-')
-        st = ss[0]
-        et = None
-        if len(ss) >= 2:
-            et = ss[1]
-        return st, et,
 
     @classmethod
     def createDetailUrl(cls, sid):

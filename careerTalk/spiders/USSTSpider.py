@@ -70,28 +70,6 @@ class USSTSpider(scrapy.Spider):
     def getDetailUrl(self, sid):
         return self.detail_url+"jobfair_"+sid+"_1.html"
 
-    def splitTimes(self, timeStr):
-        """
-        解析时间串，获取起始时间与结束时间
-        2015-4-21 13:30—15:30
-        """
-        ss = timeStr.split(u'\xa0')
-
-        st = None
-        et = None
-
-        if len(ss) == 2:
-            ts = ss[1].split(u'\u2014')
-            if len(ts) == 2:
-                st = time.strptime(ss[0]+' '+ts[0], CustomUtil.time_format)
-                st = time.strftime(CustomUtil.time_format, st)
-                et = time.strptime(ss[0]+' '+ts[1], CustomUtil.time_format)
-                et = time.strftime(CustomUtil.time_format, et)
-            else:
-                st = time.strptime(ss[0]+' '+ss[1], CustomUtil.time_format)
-                st = time.strftime(CustomUtil.time_format, st)
-        return st, et,
-
     def parse_item_detail(self, response):
         item = response.meta['item']
         item['link'] = response.url
@@ -105,7 +83,7 @@ class USSTSpider(scrapy.Spider):
             # 活动时间：2015-4-21 13:30—15:30
             info = info.strip()
             if info.__contains__(u'活动时间：'):
-                startTime, endTime = self.splitTimes(info.split(u'：')[1])
+                startTime, endTime = CustomUtil.splitTimes(info.split(u'：')[1])
             # 活动地点：光电学院演讲厅
             elif info.__contains__(u'活动地点：'):
                 location = info.split(u'：')[1]
