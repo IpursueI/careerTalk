@@ -188,7 +188,10 @@ class DoneSet(object):
         title = item.get('title')
         startTime = item.get('startTime')
         if sid:
-            return sid+'_'+title
+            if title:
+                return sid+'_'+title
+            else:
+                return sid+'_'
         elif title and startTime:
             return startTime+'_'+title
         else:
