@@ -18,15 +18,16 @@ chc = CustomUtil.convertHtmlContent
 
 class ItemPipeline(object):
     def process_item(self, item, spider):
-        if spider.name == "NJU":
-            item['title'] = chc(item['title'])
-            item['issueTime'] = chc(item['issueTime'],1)
-            h2t = html2text.HTML2Text()
-            h2t.ignore_links = True
-            item['infoDetail'] = h2t.handle(chc(item['infoDetail']))
-            return item
-        if spider.name == 'SEU':
-            return self.process_item_SEU(item, spider)
+        # todo 暂时不显示infodetailraw
+        if item['infoDetailRaw']:
+            item['infoDetailRaw'] = None
+        # todo 暂时不做html转text处理
+        # if item['infoDetailRaw']:
+        #     h2t = html2text.HTML2Text()
+        #     h2t.ignore_links = True
+        #     item['infoDetailText'] = h2t.handle(chc(item['infoDetailRaw']))
+        #     return item
+
         if item.get('company'):
             item['company'] = dict(item['company'])
         # todo 需要删除
@@ -39,13 +40,6 @@ class ItemPipeline(object):
                 item['title'] = item['company']['name']
             else:
                 raise DropItem("Missing title and companyName in %s" % item)
-        return item
-
-    def process_item_SEU(self, item, spider):
-        if item.get('targetMajor'):
-            item['targetMajor'] = chc(item['targetMajor'])
-        if item.get('targetAcademic'):
-            item['targetAcademic'] = chc(item['targetAcademic'])
         return item
 
 

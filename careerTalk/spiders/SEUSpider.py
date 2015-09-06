@@ -173,6 +173,10 @@ class SEUSpider(scrapy.Spider):
         # print ta,tm
         if len(tm):
             item['targetMajor'] = tm[0]
+        if item.get('targetMajor'):
+            item['targetMajor'] = chc(item['targetMajor'])
+        if item.get('targetAcademic'):
+            item['targetAcademic'] = chc(item['targetAcademic'])
         yield item
 
     @classmethod
