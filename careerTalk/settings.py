@@ -22,6 +22,13 @@ ITEM_PIPELINES = {
         'careerTalk.pipelines.JsonPipeline':800,
         }
 
+# 设置json文件存储路径
+MY_SETTING={
+        'version':1,
+        # 'STORE_PATH':None
+        'STORE_PATH': "/home/phk52/server/scrapyd/data/"
+}
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'
 
@@ -30,3 +37,4 @@ ITEM_PIPELINES = {
 #         'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
 #         'careerTalk.useragent.RotateUserAgentMiddleware': 400
 # }
+

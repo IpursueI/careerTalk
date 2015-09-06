@@ -9,9 +9,11 @@ from careerTalk.items import NJUItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
 
+
 class NJUSpider(scrapy.Spider):
     name = "NJU"
-    start_urls = ["http://job.nju.edu.cn/login/nju/home.jsp?type=zph&pageNow=1"]
+    start_urls = ["http://job.nju.edu.cn/login/nju/home.jsp?type=zph&pageNow=1",
+                  "http://job.nju.edu.cn:9081/login/nju/home.jsp?type=zph&pageNow=1"]
     
     rules = (
             Rule(LinkExtractor(allow=(r'/home.jsp?type=zph&pageNow=\d+')), callback='parse'),
@@ -30,12 +32,10 @@ class NJUSpider(scrapy.Spider):
 
         for sel in response.xpath("//div[@class='article-lists']/ul/li"):
             item = NJUItem()
-            item['university'] = u"南京大学"
             item['title'] = sel.xpath("span[1]/a/text()").extract()
             item_t =  chc(sel.xpath("span[2]/text()").extract()).split()
             item['location'] = item_t[0]
             item['startTime'] = item_t[1]+' '+item_t[2]
-            item['infoSource'] = u"南京大学就业创业信息网"
             
             if chc(item['title']) in self.Done:
                 continue

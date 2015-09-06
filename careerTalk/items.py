@@ -172,3 +172,8 @@ class SJTUItem(CareertalkItem):
 class NJUItem(CareertalkItem):   #南京大学
     university = scrapy.Field()  #宣讲会详细信息
     company = scrapy.Field()
+
+    def __init__(self):
+        super(NJUItem, self).__init__()
+        self['university'] = u'南京大学'
+        self['infoSource'] = u'南京大学就业创业信息网'

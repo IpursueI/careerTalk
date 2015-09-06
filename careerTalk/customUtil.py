@@ -7,7 +7,7 @@ import os
 import codecs
 from scrapy import log
 import time
-
+import careerTalk.settings as ST
 
 class CustomUtil(object):
     # 时间格式 2015-03-27 14:00
@@ -217,5 +217,6 @@ class DoneSet(object):
 
     @classmethod
     def getDonFilePath(cls, spider):
-        return os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/Done.txt")
+        storePath = ST.MY_SETTING['STORE_PATH'] or os.path.abspath(os.path.dirname(__file__))+"/../test/"
+        return os.path.join(storePath, spider.name+"/Done.txt")
 

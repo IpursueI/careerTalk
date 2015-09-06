@@ -10,6 +10,7 @@ import html2text
 import json
 import codecs
 import os
+import careerTalk.settings as ST
 from careerTalk.customUtil import CustomUtil, DoneSet
 from scrapy.exceptions import DropItem
 chc = CustomUtil.convertHtmlContent
@@ -54,10 +55,11 @@ class JsonPipeline(object):
         self.file = None
 
     def open_spider(self, spider):
-        fname = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test/"+spider.name+"/data.json")
-        dir = os.path.dirname(fname)
-        if not os.path.exists(dir):
-            os.mkdir(dir)
+        storePath = ST.MY_SETTING['STORE_PATH'] or os.path.abspath(os.path.dirname(__file__))+"/../test/"
+        fname = os.path.join(storePath, spider.name+"/data.json")
+        target_dir = os.path.dirname(fname)
+        if not os.path.exists(target_dir):
+            os.mkdir(target_dir)
         self.file = codecs.open(fname, 'a', encoding='utf-8')
 
     def process_item(self, item, spider):
