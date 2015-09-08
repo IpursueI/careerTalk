@@ -55,6 +55,7 @@ class CJLUSpider(scrapy.Spider):
         item = response.meta['item']
         item['link'] = response.url
         item['infoDetailRaw'] = response.xpath("//div[@class='content']/table//tr[4]/td").extract()
+        item['company']  = CompanyItem()
         yield item 
 
     def parse_next_page(self, response):

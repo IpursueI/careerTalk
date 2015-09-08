@@ -62,6 +62,7 @@ class CAASpider(scrapy.Spider):
         item['infoDetailRaw'] = response.xpath("//div[@class='vContent']").extract()
         item['company']  = CompanyItem()
         item['company']['introduction'] = response.xpath("//div[@class='vContent cl']/div").extract()
+        #item['company']['phoneNumber'] = response.xpath("//html").extract()
         yield item 
 
     def parse_next_page(self, response):

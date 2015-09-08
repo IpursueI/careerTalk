@@ -63,6 +63,7 @@ class ZJUTSpider(scrapy.Spider):
         item['location'] = infoTemp[index+1:]
         #item['image_urls'] = response.xpath("//div[@class='vContent']//img/@src").extract() 
         item['infoDetailRaw'] = response.xpath("//div[@class='gs']").extract()
+        item['company']  = CompanyItem()
         #item['company']  = CompanyItem()
         #item['company']['introduction'] = response.xpath("//div[@class='vContent cl']/div").extract()
         yield item 

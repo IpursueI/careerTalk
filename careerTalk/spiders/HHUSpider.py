@@ -62,7 +62,8 @@ class HHUSpider(scrapy.Spider):
     def parse_detail(self, response):
         item = response.meta['item']
         item['link'] = response.url
-        item['infoDetailRaw'] = response.xpath("//div[@class='wznr']").extract() 
+        item['infoDetailRaw'] = response.xpath("//div[@class='wznr']").extract()
+        item['company']  = CompanyItem()
         #item['image_urls'] = response.xpath("//div[@class='vContent']//img/@src").extract() 
         #item['infoDetailRaw'] = response.xpath("//div[@class='vContent']").extract()
         #item['location'] = response.xpath("//div[@class='wznr']/span/div[4]/span/text()").extract()

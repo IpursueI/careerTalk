@@ -15,6 +15,9 @@ from scrapy.http import Request
 from scrapy.exceptions import DropItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+from careerTalk.customUtil import CustomUtil
+phoneRe = CustomUtil.phoneNumberRegular
+emailRe = CustomUtil.emailRegular
 
 
 class ItemPipeline(object):
@@ -31,10 +34,12 @@ class ItemPipeline(object):
             item['startTime'] = chc(item['startTime'])
             item['infoSource'] = chc(item['infoSource'])
             item['company']['name'] = chc(item['company']['name'])
-            item['company'] = dict(item['company']) 
             item['infoDetailRaw'] = chc(item['infoDetailRaw'])
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
+            item['company'] = dict(item['company']) 
             return item
 
         if spider.name == "NJUST":
@@ -47,6 +52,8 @@ class ItemPipeline(object):
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
             item['company'] = dict(item['company']) 
 
             return item
@@ -61,18 +68,22 @@ class ItemPipeline(object):
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
             item['company'] = dict(item['company']) 
 
             return item
 
         if spider.name == "ZJGSU":
             item['company']['name'] = h2t.handle(chc(item['company']['name'])).replace('*','').strip()
-            item['company'] = dict(item['company']) 
             item['startTime'] = h2t.handle(item['startTime']).replace('*','').strip()
             item['location'] = h2t.handle(chc(item['location'])).replace('*','').strip()
             item['infoDetailRaw'] = chc(item['infoDetailRaw'])
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
+            item['company'] = dict(item['company']) 
             return item
             
         if spider.name == "NUAA":
@@ -81,6 +92,9 @@ class ItemPipeline(object):
             item['infoDetailRaw'] = chc(item['infoDetailRaw'])
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
+            item['company'] = dict(item['company']) 
 
             return item
 
@@ -90,7 +104,9 @@ class ItemPipeline(object):
             item['infoDetailRaw'] = chc(item['infoDetailRaw'])
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
-
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
+            item['company'] = dict(item['company']) 
             return item
 
         if spider.name == "CAA":
@@ -103,7 +119,9 @@ class ItemPipeline(object):
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
-            item['company'] = dict(item['company']) 
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
+            item['company'] = dict(item['company'])
 
             return item
 
@@ -112,6 +130,9 @@ class ItemPipeline(object):
             item['infoDetailRaw'] = chc(item['infoDetailRaw'])
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
+            item['company'] = dict(item['company'])
 
             return item
 
@@ -120,7 +141,9 @@ class ItemPipeline(object):
             item['infoDetailRaw'] = chc(item['infoDetailRaw'])
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
-
+            item['company']['phoneNumber'] = phoneRe(item['infoDetailText'])
+            item['company']['email'] = emailRe(item['infoDetailText'])
+            item['company'] = dict(item['company']) 
             return item
 
         if spider.name == "HZNU":
@@ -131,8 +154,9 @@ class ItemPipeline(object):
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
+            item['company']['phoneNumber'] = phoneRe(item['company']['introduction'])
+            item['company']['email'] = emailRe(item['company']['introduction'])
             item['company'] = dict(item['company']) 
-
             return item
 
         if spider.name == "ZJU":
@@ -143,7 +167,20 @@ class ItemPipeline(object):
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
+            item['company']['introduction']
             item['company'] = dict(item['company']) 
+
+            return item
+
+        if spider.name == "NJAU":
+            item['title'] = chc(item['title'])
+            #item['location'] = chc(item['location'])
+            item['startTime'] = chc(item['startTime'])
+            #item['infoDetailRaw'] = chc(item['infoDetailRaw'])
+            #item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
+            #item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
+            #item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
+            #item['company'] = dict(item['company']) 
 
             return item
 

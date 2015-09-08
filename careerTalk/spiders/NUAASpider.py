@@ -58,5 +58,6 @@ class NUAASpider(scrapy.Spider):
         item['link'] = response.url
         item['issueTime'] = response.xpath("//table[@class='newslisttdbk']/tr[2]/td/text()").extract()[0].split()[0][5:]
         item['infoDetailRaw'] = response.xpath("//table[@class='newslisttdbk']").extract()
+        item['company']  = CompanyItem()
         yield item 
 

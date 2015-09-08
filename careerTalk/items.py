@@ -66,3 +66,6 @@ class HZNUItem(CareertalkItem):  #杭州师范大学
 
 class ZJUItem(CareertalkItem):  #浙江大学
     company = scrapy.Field()
+
+class NJAUItem(CareertalkItem):  #南京农业大学
+    company = scrapy.Field()
