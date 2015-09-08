@@ -167,7 +167,8 @@ class ItemPipeline(object):
             item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
             item['infoDetailRaw'] = ""     #原始数据太多，测试时清空 
             item['company']['introduction'] = h2t.handle(chc(item['company']['introduction']))
-            item['company']['introduction']
+            item['company']['phoneNumber'] = phoneRe(item['company']['introduction'])
+            item['company']['email'] = emailRe(item['company']['introduction'])
             item['company'] = dict(item['company']) 
 
             return item
