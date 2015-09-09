@@ -11,6 +11,7 @@ from careerTalk.items import CAAItem
 from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
 
 class CAASpider(scrapy.Spider):
     name = "CAA"
@@ -18,12 +19,13 @@ class CAASpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(CAASpider, self).__init__(*args, **kwargs)
-        CAADone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"CAADone")
-        self.Done = set()
-        f = codecs.open(CAADone,'r','utf-8')
-        for line in f:
-            self.Done.add(line.strip())
-        f.close()
+        #CAADone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"CAADone")
+        #self.Done = set()
+        #f = codecs.open(CAADone,'r','utf-8')
+        #for line in f:
+            #self.Done.add(line.strip())
+        #f.close()
+        self.Done = getDone("CAADone")
 
     def parse(self, response):
 

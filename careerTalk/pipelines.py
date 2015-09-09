@@ -10,14 +10,18 @@ import html2text
 import json
 import codecs
 import os
-from scrapy.contrib.pipeline.images import ImagesPipeline
+import platform
+#from scrapy.contrib.pipeline.images import ImagesPipeline
+from scrapy.pipelines.images import ImagesPipeline
 from scrapy.http import Request
 from scrapy.exceptions import DropItem
+import careerTalk.settings as ST
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
-from careerTalk.customUtil import CustomUtil
 phoneRe = CustomUtil.phoneNumberRegular
 emailRe = CustomUtil.emailRegular
+writeDone = CustomUtil.writeDoneSet
+getBase = CustomUtil.getBaseDir
 
 
 class ItemPipeline(object):
@@ -191,7 +195,9 @@ class JsonPipeline(object):
         self.newItem = []
 
     def open_spider(self, spider):
-        self.file = codecs.open(spider.name+'.json','a',encoding='utf-8')
+        baseDir = getBase()
+        fileName = os.path.join(baseDir,spider.name+'.json')
+        self.file = codecs.open(fileName,'a',encoding='utf-8')
 
     def process_item(self, item, spider):
         self.newItem.append(item['title']+'_'+item['sid'])
@@ -204,11 +210,12 @@ class JsonPipeline(object):
         self.file.close()
 
         #记录spider的新增项目
-        fname = os.path.join(os.path.abspath(os.path.dirname(__file__)),"spiders/"+spider.name+"Done")
-        f = codecs.open(fname, 'a', 'utf-8')
-        for i in self.newItem:
-            f.write(i+os.linesep)
-        f.close()
+        #fname = os.path.join(os.path.abspath(os.path.dirname(__file__)),"spiders/"+spider.name+"Done")
+        #f = codecs.open(fname, 'a', 'utf-8')
+        #for i in self.newItem:
+            #f.write(i+os.linesep)
+        #f.close()
+        writeDone(spider.name+"Done", self.newItem)
 
 
 class MyImagesPipeline(ImagesPipeline):

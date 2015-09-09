@@ -11,6 +11,7 @@ from careerTalk.items import ZJUTItem
 from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
 
 class ZJUTSpider(scrapy.Spider):
     name = "ZJUT"
@@ -19,12 +20,7 @@ class ZJUTSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         self.start = 0
         super(ZJUTSpider, self).__init__(*args, **kwargs)
-        ZJUTDone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"ZJUTDone")
-        self.Done = set()
-        f = codecs.open(ZJUTDone,'r','utf-8')
-        for line in f:
-            self.Done.add(line.strip())
-        f.close()
+        self.Done = getDone("ZJUTDone")
 
     def parse(self, response):
 
@@ -47,9 +43,6 @@ class ZJUTSpider(scrapy.Spider):
             request.meta['item'] = item
             yield request
 
-        #if itemCount == len(responseData):
-        #    raise CloseSpider('already done')
-
         nextUrl = self.parse_next_page(response)
         if nextUrl:
             yield scrapy.Request(nextUrl, callback=self.parse)
@@ -64,8 +57,6 @@ class ZJUTSpider(scrapy.Spider):
         #item['image_urls'] = response.xpath("//div[@class='vContent']//img/@src").extract() 
         item['infoDetailRaw'] = response.xpath("//div[@class='gs']").extract()
         item['company']  = CompanyItem()
-        #item['company']  = CompanyItem()
-        #item['company']['introduction'] = response.xpath("//div[@class='vContent cl']/div").extract()
         yield item 
 
     def parse_next_page(self, response):

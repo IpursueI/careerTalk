@@ -11,6 +11,7 @@ from careerTalk.items import CJLUItem
 from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
 
 class CJLUSpider(scrapy.Spider):
     name = "CJLU"
@@ -18,12 +19,7 @@ class CJLUSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(CJLUSpider, self).__init__(*args, **kwargs)
-        CJLUDone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"CJLUDone")
-        self.Done = set()
-        f = codecs.open(CJLUDone,'r','utf-8')
-        for line in f:
-            self.Done.add(line.strip())
-        f.close()
+        self.Done = getDone("CJLUDone")
 
     def parse(self, response):
 

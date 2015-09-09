@@ -11,6 +11,7 @@ from careerTalk.items import NJNUItem
 from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
 
 class NJNUSpider(scrapy.Spider):
     name = "NJNU"
@@ -18,12 +19,7 @@ class NJNUSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(NJNUSpider, self).__init__(*args, **kwargs)
-        NJNUDone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"NJNUDone")
-        self.Done = set()
-        f = codecs.open(NJNUDone,'r','utf-8')
-        for line in f:
-            self.Done.add(line.strip())
-        f.close()
+        self.Done = getDone("NJNUDone")
 
     def parse(self, response):
 

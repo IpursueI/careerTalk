@@ -11,6 +11,7 @@ from careerTalk.items import HHUItem
 from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
 
 class HHUSpider(scrapy.Spider):
     name = "HHU"
@@ -18,12 +19,7 @@ class HHUSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(HHUSpider, self).__init__(*args, **kwargs)
-        HHUDone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"HHUDone")
-        self.Done = set()
-        f = codecs.open(HHUDone,'r','utf-8')
-        for line in f:
-            self.Done.add(line.strip())
-        f.close()
+        self.Done = getDone("HHUDone")
 
     def parse(self, response):
 

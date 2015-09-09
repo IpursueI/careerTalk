@@ -11,6 +11,7 @@ from careerTalk.items import ZJUItem
 from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
 
 class ZJUSpider(scrapy.Spider):
     name = "ZJU"
@@ -19,12 +20,7 @@ class ZJUSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super(ZJUSpider, self).__init__(*args, **kwargs)
         self.totalPages = 0
-        ZJUDone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"ZJUDone")
-        self.Done = set()
-        f = codecs.open(ZJUDone,'r','utf-8')
-        for line in f:
-            self.Done.add(line.strip())
-        f.close()
+        self.Done = getDone("ZJUDone")
 
     def parse(self, response):
 
@@ -48,9 +44,6 @@ class ZJUSpider(scrapy.Spider):
             request = scrapy.Request(url,callback=self.parse_detail)
             request.meta['item'] = item
             yield request
-
-        #if itemCount == len(responseData):
-        #    raise CloseSpider('already done')
 
         nextUrl = self.parse_next_page(response)
         if nextUrl:

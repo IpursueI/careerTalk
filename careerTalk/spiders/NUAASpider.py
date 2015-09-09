@@ -12,6 +12,7 @@ from careerTalk.items import NUAAItem
 from careerTalk.items import CompanyItem
 from careerTalk.customUtil import CustomUtil
 chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
 
 class NUAASpider(scrapy.Spider):
     name = "NUAA"
@@ -19,12 +20,7 @@ class NUAASpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(NUAASpider, self).__init__(*args, **kwargs)
-        NUAADone = os.path.join(os.path.abspath(os.path.dirname(__file__)),"NUAADone")
-        self.Done = set()
-        f = codecs.open(NUAADone,'r','utf-8')
-        for line in f:
-            self.Done.add(line.strip())
-        f.close()
+        self.Done = getDone("NUAADone")
 
     def parse(self, response):
         body = response.body.decode('gbk')

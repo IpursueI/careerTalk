@@ -2,6 +2,10 @@
 
 import json
 import re
+import platform
+import os
+import codecs
+import careerTalk.settings as ST
 class CustomUtil(object):
 
     @staticmethod
@@ -35,3 +39,32 @@ class CustomUtil(object):
     def emailRegular(content):
         tEmail = re.findall('[\w+\.]*\w+-*\w+@\w+[\.com|\.org|\.cn]+',content)
         return " ".join(tEmail) if tEmail else ""
+
+    @staticmethod
+    def getBaseDir():
+        if platform.system() == 'Linux':
+            return ST.MY_SETTING['STORE_PATH']
+        if platform.system() == 'Windows':
+            return ST.MY_SETTING['STORE_PATH_WINDOWS']
+
+    @staticmethod
+    def getDoneSet(fileName):
+        baseDir = CustomUtil.getBaseDir()
+        DoneFile = os.path.join(baseDir,fileName)
+        if not os.path.exists(DoneFile):
+            open(DoneFile,'w')
+        Done = set()
+        f = codecs.open(DoneFile,'r','utf-8')
+        for line in f:
+            Done.add(line.strip())
+        f.close()
+        return Done
+
+    @staticmethod
+    def writeDoneSet(fileName, newItem):
+        baseDir = CustomUtil.getBaseDir()
+        DoneFile = os.path.join(baseDir,fileName)
+        f = codecs.open(DoneFile, 'a', 'utf-8')
+        for i in newItem:
+            f.write(i+os.linesep)
+        f.close()
