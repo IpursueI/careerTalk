@@ -89,6 +89,7 @@ class CustomUtil(object):
         item['infoDetailRaw'] = "" #infoDetailRaw 数据量大，暂时清空
         item['link'] = CustomUtil.convertHtmlContent(item.get('link',''))
         item['sid'] = CustomUtil.convertHtmlContent(item.get('sid',''))
+        item['company']['name'] = CustomUtil.convertHtmlContent(item['company'].get('name',''))
         item['company']['introduction'] = h2t.handle(CustomUtil.convertHtmlContent(item['company'].get('introduction','')))
         item['company']['phoneNumber'] = CustomUtil.phoneNumberRegular(item['infoDetailText']) + CustomUtil.phoneNumberRegular(item['company']['introduction'])
         item['company']['email'] = CustomUtil.emailRegular(item['infoDetailText']) + CustomUtil.emailRegular(item['company']['introduction'])
