@@ -3,3 +3,7 @@
 *.pyc
 *.swp
 *.json~
+*Done~
+picture/
+*.json
+*Done

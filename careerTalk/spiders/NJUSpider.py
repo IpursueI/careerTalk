@@ -1,0 +1,49 @@
+# -*- coding:utf-8 -*-
+
+import scrapy
+import os
+import codecs
+from scrapy.contrib.spiders import CrawlSpider,Rule
+from scrapy.contrib.linkextractors import LinkExtractor
+from careerTalk.items import NJUItem
+from careerTalk.items import CompanyItem
+from careerTalk.customUtil import CustomUtil
+chc = CustomUtil.convertHtmlContent
+getDone = CustomUtil.getDoneSet
+
+class NJUSpider(scrapy.Spider):
+    name = "NJU"
+    start_urls = ["http://job.nju.edu.cn/login/nju/home.jsp?type=zph&pageNow=1"]
+    
+    def __init__(self, *args, **kwargs):
+        super(NJUSpider, self).__init__(*args, **kwargs)
+        self.Done = getDone("NJUDone")
+
+    def parse(self, response):
+
+        for sel in response.xpath("//div[@class='article-lists']/ul/li"):
+            item = NJUItem()
+            item['university'] = u"南京大学"
+            item['title'] = sel.xpath("span[1]/a/text()").extract()
+            item_t =  chc(sel.xpath("span[2]/text()").extract()).split()
+            item['location'] = item_t[0]
+            item['startTime'] = item_t[1]+' '+item_t[2]
+            item['infoSource'] = u"南京大学就业创业信息网"
+            detailUrl = chc(sel.xpath("span[1]/a/@href").extract())
+            item['sid'] =  detailUrl[detailUrl.index('=')+1:detailUrl.index('type')-1]
+            if chc(item['title'])+'_'+chc(item['sid']) in self.Done:
+                continue
+
+            url = response.url[:response.url.rindex('/')+1] + detailUrl
+            request = scrapy.Request(url,callback=self.parse_detail)
+            request.meta['item'] = item
+            yield request
+
+    def parse_detail(self, response):
+        item = response.meta['item']
+        item['link'] = response.url
+        item['issueTime'] = response.xpath("//div[@class='article-info']").re(r'</span>*(.*)')
+        item['company'] = CompanyItem()
+        item['company']['name'] = item['issueTime'][0]
+        item['infoDetailRaw'] = response.xpath("//table[@class='job_detail']").extract()
+        yield item 
