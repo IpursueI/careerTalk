@@ -5,11 +5,14 @@ import re
 import platform
 import os
 import codecs
+import html2text
 import careerTalk.settings as ST
 class CustomUtil(object):
 
     @staticmethod
     def convertHtmlContent(li, idx=0):
+        if li is None:
+            return ""
         isString = isinstance(li, basestring)
         if isString:
             return li
@@ -68,3 +71,27 @@ class CustomUtil(object):
         for i in newItem:
             f.write(i+os.linesep)
         f.close()
+
+    @staticmethod
+    def handleItem(item):
+        h2t = html2text.HTML2Text()
+        h2t.ignore_links = True
+        h2t.ignore_images = True
+
+        item['university'] = CustomUtil.convertHtmlContent(item.get('university',''))
+        item['title'] = CustomUtil.convertHtmlContent(item.get('title',''))
+        item['issueTime'] = CustomUtil.convertHtmlContent(item.get('issueTime',''))
+        item['startTime'] = CustomUtil.convertHtmlContent(item.get('startTime',''))
+        item['location'] = CustomUtil.convertHtmlContent(item.get('location',''))
+        item['infoSource'] = CustomUtil.convertHtmlContent(item.get('infoSource',''))
+        item['infoDetailRaw'] = CustomUtil.convertHtmlContent(item.get('infoDetailRaw',''))
+        item['infoDetailText'] = h2t.handle(item['infoDetailRaw'])
+        item['infoDetailRaw'] = "" #infoDetailRaw 数据量大，暂时清空
+        item['link'] = CustomUtil.convertHtmlContent(item.get('link',''))
+        item['sid'] = CustomUtil.convertHtmlContent(item.get('sid',''))
+        item['company']['introduction'] = h2t.handle(CustomUtil.convertHtmlContent(item['company'].get('introduction','')))
+        item['company']['phoneNumber'] = CustomUtil.phoneNumberRegular(item['infoDetailText']) + CustomUtil.phoneNumberRegular(item['company']['introduction'])
+        item['company']['email'] = CustomUtil.emailRegular(item['infoDetailText']) + CustomUtil.emailRegular(item['company']['introduction'])
+        item['company'] = dict(item['company']) 
+        
+        return item
