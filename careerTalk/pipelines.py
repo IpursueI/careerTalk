@@ -19,7 +19,7 @@ chc = CustomUtil.convertHtmlContent
 class ItemPipeline(object):
     def process_item(self, item, spider):
         # todo 暂时不显示infodetailraw
-        if item['infoDetailRaw']:
+        if item.get('infoDetailRaw'):
             item['infoDetailRaw'] = None
         # todo 暂时不做html转text处理
         # if item['infoDetailRaw']:
