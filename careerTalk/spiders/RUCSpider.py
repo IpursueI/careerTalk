@@ -44,7 +44,7 @@ class RUCSpider(scrapy.Spider):
             m = re.search(r'article_show2.asp\?id=(\d+)', url)
             if m:
                 sid = m.group(1)
-                title = a.text()
+                title = a.text().split(' ')[0]
                 item = self.createItem(sid, title)
                 if self.isNeedToParseDetail(url, item):
                     yield scrapy.Request(url, callback=self.parse_item_detail, meta={'item': item})

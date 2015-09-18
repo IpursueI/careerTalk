@@ -19,7 +19,7 @@ class NJUSTSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(NJUSTSpider, self).__init__(*args, **kwargs)
-        self.Done = getDone("NJUSTDone")
+        self.Done = getDone(self.name)
 
     def parse(self, response):
 

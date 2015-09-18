@@ -19,7 +19,7 @@ class NJNUSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(NJNUSpider, self).__init__(*args, **kwargs)
-        self.Done = getDone("NJNUDone")
+        self.Done = getDone(self.name)
 
     def parse(self, response):
 

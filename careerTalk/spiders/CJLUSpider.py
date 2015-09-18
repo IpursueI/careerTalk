@@ -19,7 +19,7 @@ class CJLUSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(CJLUSpider, self).__init__(*args, **kwargs)
-        self.Done = getDone("CJLUDone")
+        self.Done = getDone(self.name)
 
     def parse(self, response):
 

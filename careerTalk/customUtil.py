@@ -9,6 +9,7 @@ from scrapy import log
 import time
 import html2text
 import careerTalk.settings as ST
+from scrapy.exceptions import DropItem
 class CustomUtil(object):
 
     # 时间格式 2015-03-27 14:00
@@ -60,9 +61,14 @@ class CustomUtil(object):
             return ST.MY_SETTING['STORE_PATH_WINDOWS']
 
     @staticmethod
-    def getDoneSet(fileName):
+    def getDoneSet(spiderName):
         baseDir = CustomUtil.getBaseDir()
-        DoneFile = os.path.join(baseDir,fileName)
+        if not os.path.exists(baseDir):
+            os.mkdir(baseDir)
+        baseDir = os.path.join(baseDir, spiderName)
+        DoneFile = os.path.join(baseDir, ("%s_done.txt" % spiderName))
+        if not os.path.exists(baseDir):
+            os.mkdir(baseDir)
         if not os.path.exists(DoneFile):
             open(DoneFile,'w')
         Done = set()
@@ -73,13 +79,26 @@ class CustomUtil(object):
         return Done
 
     @staticmethod
-    def writeDoneSet(fileName, newItem):
-        baseDir = CustomUtil.getBaseDir()
-        DoneFile = os.path.join(baseDir,fileName)
+    def writeDoneSet(spider, newItem):
+        spiderName = spider.name
+        baseDir = os.path.join(CustomUtil.getBaseDir(), spiderName)
+        DoneFile = os.path.join(baseDir, ("%s_done.txt" % spiderName))
         f = codecs.open(DoneFile, 'a', 'utf-8')
         for i in newItem:
             f.write(i+os.linesep)
         f.close()
+        keys = newItem
+        if len(keys):
+            log.msg((spiderName+u'新添加了%d个数据,起始点为 '+keys[0]) % len(keys), level=log.INFO, spider=spider)
+        else:
+            log.msg(spiderName+u'未添加新数据', level=log.INFO, spider=spider)
+
+    @staticmethod
+    def h2t_handle(html):
+        if html:
+            return html2text.HTML2Text().handle(html)
+        else:
+            return ""
 
     @staticmethod
     def handleItem(item):
@@ -98,7 +117,7 @@ class CustomUtil(object):
         item['link'] = CustomUtil.convertHtmlContent(item.get('link',''))
         item['sid'] = CustomUtil.convertHtmlContent(item.get('sid',''))
         item['company']['name'] = CustomUtil.convertHtmlContent(item['company'].get('name',''))
-        item['company']['introduction'] = h2t.handle(CustomUtil.convertHtmlContent(item['company'].get('introduction','')))
+        item['company']['introduction'] = CustomUtil.h2t_handle(CustomUtil.convertHtmlContent(item['company'].get('introduction','')))
         item['company']['phoneNumber'] = CustomUtil.phoneNumberRegular(item['infoDetailText']) + CustomUtil.phoneNumberRegular(item['company']['introduction'])
         item['company']['email'] = CustomUtil.emailRegular(item['infoDetailText']) + CustomUtil.emailRegular(item['company']['introduction'])
         if not item.get('title'):

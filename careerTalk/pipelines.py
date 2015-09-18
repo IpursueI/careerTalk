@@ -12,7 +12,6 @@ import platform
 #from scrapy.contrib.pipeline.images import ImagesPipeline
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.http import Request
-from scrapy.exceptions import DropItem
 import careerTalk.settings as ST
 from careerTalk.customUtil import CustomUtil
 writeDone = CustomUtil.writeDoneSet
@@ -35,7 +34,14 @@ class JsonPipeline(object):
 
     def open_spider(self, spider):
         baseDir = getBase()
-        fileName = os.path.join(baseDir,spider.name+'.json')
+        if not os.path.exists(baseDir):
+            os.mkdir(baseDir)
+
+        baseDir = os.path.join(baseDir, spider.name)
+        if not os.path.exists(baseDir):
+            os.mkdir(baseDir)
+
+        fileName = os.path.join(baseDir, '%s_data.json'%spider.name)
         self.file = codecs.open(fileName,'a',encoding='utf-8')
 
     def process_item(self, item, spider):
@@ -47,7 +53,7 @@ class JsonPipeline(object):
 
     def close_spider(self, spider):
         self.file.close()
-        writeDone(spider.name+"Done", self.itemIds)
+        writeDone(spider, self.itemIds)
 
 
 class MyImagesPipeline(ImagesPipeline):

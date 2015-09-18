@@ -19,7 +19,7 @@ class HZNUSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         super(HZNUSpider, self).__init__(*args, **kwargs)
-        self.Done = getDone("HZNUDone")
+        self.Done = getDone(self.name)
 
     def parse(self, response):
 

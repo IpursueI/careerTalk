@@ -20,7 +20,7 @@ class ZJUTSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         self.start = 0
         super(ZJUTSpider, self).__init__(*args, **kwargs)
-        self.Done = getDone("ZJUTDone")
+        self.Done = getDone(self.name)
 
     def parse(self, response):
 
