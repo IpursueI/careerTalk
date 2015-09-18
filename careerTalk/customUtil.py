@@ -55,7 +55,7 @@ class CustomUtil(object):
     @staticmethod
     def getBaseDir():
         if platform.system() == 'Linux':
-            return ST.MY_SETTING['STORE_PATH']
+            return ST.MY_SETTING['STORE_PATH_LINUX']
         if platform.system() == 'Windows':
             return ST.MY_SETTING['STORE_PATH_WINDOWS']
 
@@ -88,7 +88,6 @@ class CustomUtil(object):
         h2t.ignore_images = True
 
         item['university'] = CustomUtil.convertHtmlContent(item.get('university',''))
-        item['title'] = CustomUtil.convertHtmlContent(item.get('title',''))
         item['issueTime'] = CustomUtil.convertHtmlContent(item.get('issueTime',''))
         item['startTime'] = CustomUtil.convertHtmlContent(item.get('startTime',''))
         item['location'] = CustomUtil.convertHtmlContent(item.get('location',''))
@@ -102,6 +101,12 @@ class CustomUtil(object):
         item['company']['introduction'] = h2t.handle(CustomUtil.convertHtmlContent(item['company'].get('introduction','')))
         item['company']['phoneNumber'] = CustomUtil.phoneNumberRegular(item['infoDetailText']) + CustomUtil.phoneNumberRegular(item['company']['introduction'])
         item['company']['email'] = CustomUtil.emailRegular(item['infoDetailText']) + CustomUtil.emailRegular(item['company']['introduction'])
+        if not item.get('title'):
+            if item.get('company') and item.get('company').get('name'):
+                item['title'] = item['company']['name']
+            else:
+                raise DropItem("Missing title and companyName in %s" % item)
+        item['title'] = CustomUtil.convertHtmlContent(item.get('title',''))
         item['company'] = dict(item['company']) 
         
         return item
@@ -261,20 +266,19 @@ class DoneSet(object):
         """
         :return: 根据item信息返回一个用于区分不同item的字符串
         """
-        # sid = item.get('sid')
-        # title = item.get('title')
-        # startTime = item.get('startTime')
-        # if sid:
-        #     if title:
-        #         return sid+'_'+title
-        #     else:
-        #         return sid+'_'
-        # elif title and startTime:
-        #     return startTime+'_'+title
-        # else:
-        #     log.msg('can not get the itemId , item:'+str(item), level=log.WARNING, spider=spider)
-        #     return item.__hash__()
-        return item['title']+'_'+item['sid']
+        sid = item.get('sid')
+        title = item.get('title')
+        startTime = item.get('startTime')
+        if sid:
+            if title:
+                return title+'_'+sid
+            else:
+                return '_'+sid
+        elif title and startTime:
+            return title+'_'+startTime
+        else:
+            log.msg('can not get the itemId , item:'+str(item), level=log.WARNING, spider=spider)
+            return item.__hash__()
 
     @classmethod
     def createDoneFile(cls, spider, keys):

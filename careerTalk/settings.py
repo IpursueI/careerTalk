@@ -28,7 +28,7 @@ DOWNLOAD_TIMEOUT = 15
 MY_SETTING={
         'version':1,
         # 'STORE_PATH':None
-        'STORE_PATH': "/home/phk52/server/scrapyd/data/",
+        'STORE_PATH_LINUX': "/home/phk52/server/scrapyd/data/",
         'STORE_PATH_WINDOWS': "E:\code\python\careerTalkData"
 }
 
