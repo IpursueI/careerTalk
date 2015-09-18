@@ -13,12 +13,17 @@ BOT_NAME = 'careerTalk'
 SPIDER_MODULES = ['careerTalk.spiders']
 NEWSPIDER_MODULE = 'careerTalk.spiders'
 
+# COOKIES_ENABLES = False
+# DOWNLOAD_DELAY = 0.5
+# CONCURRENT_REQUESTS_PER_DOMAIN = 6
+
 ITEM_PIPELINES = { 
         'careerTalk.pipelines.ItemPipeline':300,
         'careerTalk.pipelines.JsonPipeline':800,
         #'careerTalk.pipelines.MyImagesPipeline':850,
         }
 
+<<<<<<< HEAD
 DOWNLOAD_TIMEOUT = 15
 
 MY_SETTING={
@@ -29,5 +34,21 @@ MY_SETTING={
 }
 
 IMAGES_STORE = 'E:\code\python\careerTalkData\picture'
+=======
+# 设置json文件存储路径
+MY_SETTING={
+        'version':1,
+        # 'STORE_PATH':None
+        'STORE_PATH': "/home/phk52/server/scrapyd/data/"
+}
+
+>>>>>>> dev-phk
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'
+# USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'
+
+# 取消默认的useragent,使用新的useragent
+# DOWNLOADER_MIDDLEWARES = {
+#         'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
+#         'careerTalk.useragent.RotateUserAgentMiddleware': 400
+# }
+
