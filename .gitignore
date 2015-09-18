@@ -4,12 +4,10 @@
 test/
 *.xls#
 *.swp
-<<<<<<< HEAD
 *.json~
 *Done~
 picture/
 *.json
 *Done
-=======
 *.json~
->>>>>>> dev-phk
+

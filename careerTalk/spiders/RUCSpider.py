@@ -11,7 +11,7 @@ import scrapy
 from careerTalk.items import RUCItem
 from careerTalk.customUtil import CustomUtil, DoneSet
 from pyquery import PyQuery as pq
-
+from careerTalk.items import CompanyItem
 chc = CustomUtil.convertHtmlContent
 gfs = CustomUtil.getFirstStr
 
@@ -82,6 +82,7 @@ class RUCSpider(scrapy.Spider):
         item['startTime'] = startTime
 
         item['infoDetailRaw'] = chc(infoDetailRaw)
+        item['company']  = CompanyItem()
         # 因为公司数据不规则，无法直接提取公司信息
         return item
 

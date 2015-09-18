@@ -9,7 +9,7 @@ import time
 from careerTalk.items import SEUItem
 from careerTalk.customUtil import CustomUtil,DoneSet
 import re
-
+from careerTalk.items import CompanyItem
 chc = CustomUtil.convertHtmlContent
 
 
@@ -177,6 +177,7 @@ class SEUSpider(scrapy.Spider):
             item['targetMajor'] = chc(item['targetMajor'])
         if item.get('targetAcademic'):
             item['targetAcademic'] = chc(item['targetAcademic'])
+        item['company']  = CompanyItem()
         yield item
 
     @classmethod

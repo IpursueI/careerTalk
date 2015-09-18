@@ -97,7 +97,7 @@ class USSTSpider(scrapy.Spider):
         item['endTime'] = endTime
         item['location'] = location
         item['issueTime'] = issueTime
-
+        item['company']  = CompanyItem()
         infoDetailRaw = None
         ts = response.css('table table')[0]
         infoDetailRaw = chc(ts.css('tr:nth-child(5) td:nth-child(2)').extract())

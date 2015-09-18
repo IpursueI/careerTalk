@@ -29,13 +29,14 @@ class HZNUSpider(scrapy.Spider):
         for sel in responseData:
             item = HZNUItem()
             item['university'] = u"杭州师范大学"
-            item['title'] = sel.xpath("td[1]/a[@target='_blank']/font/text()").extract()
+            item['title'] = sel.xpath("td[1]/a/font/text()").extract()
+            item['title'] = chc(item['title'],1)
             item['location'] = sel.xpath("td[2]/text()").extract()
             item['startTime'] = sel.xpath("td[3]/text()").extract()
             item['infoSource'] = u"杭州师范大学就业创业网"
             detailUrl = chc(sel.xpath("td[1]/a[@target='_blank']/@href").extract())
             item['sid'] = detailUrl[detailUrl.rindex('=')+1:]
-            if chc(item['title'],1)+'_'+chc(item['sid']) in self.Done:
+            if chc(item['title'])+'_'+chc(item['sid']) in self.Done:
                 itemCount += 1
                 continue
 

@@ -8,9 +8,11 @@ import re
 import json
 
 import scrapy
+from careerTalk.items import CompanyItem
 from careerTalk import items
 from careerTalk.customUtil import CustomUtil, DoneSet
 from pyquery import PyQuery as pq
+
 
 chc = CustomUtil.convertHtmlContent
 gfs = CustomUtil.getFirstStr
@@ -71,7 +73,7 @@ class BITSpider(scrapy.Spider):
         issueTime = None
         if m:
             issueTime = m.group(1)
-
+        item['company']  = CompanyItem()
         item['infoDetailRaw'] = chc(infoDetailRaw)
         item['issueTime'] = issueTime
 

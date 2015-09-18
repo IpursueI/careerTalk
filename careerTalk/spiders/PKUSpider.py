@@ -83,6 +83,7 @@ class PKUSpider(scrapy.Spider):
         infoDetailRaw = response.css('.articleContext').extract()
 
         item['infoDetailRaw'] = chc(infoDetailRaw)
+        item['company']  = CompanyItem()
         return item
 
     @staticmethod

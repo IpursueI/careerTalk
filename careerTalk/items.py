@@ -10,7 +10,6 @@ import scrapy
 
 
 class CareertalkItem(scrapy.Item):
-<<<<<<< HEAD
     sid = scrapy.Field()
     link = scrapy.Field()
     title = scrapy.Field()       # 宣讲会标题
@@ -23,19 +22,6 @@ class CareertalkItem(scrapy.Item):
     infoDetailRaw = scrapy.Field()  #宣讲会原始详细信息(html)
     image_urls = scrapy.Field()
     images = scrapy.Field()
-=======
-    university = scrapy.Field()  # 学校名称 中文全称
-    title = scrapy.Field()       # 宣讲会标题
-    issueTime = scrapy.Field()   # 宣讲会消息发布时间 2015-05-15
-    startTime = scrapy.Field()   # 宣讲会开始时间  2015-05-15 18:30
-    location = scrapy.Field()    # 宣讲会地点
-    infoSource = scrapy.Field()  # 宣讲会信息来源
-    infoDetailText = scrapy.Field()  # 宣讲会详细信息(纯文本)
-    infoDetailRaw = scrapy.Field()  # 宣讲会原始详细信息(html)
-    link = scrapy.Field()           # 宣讲会详细信息具体页面
-    sid = scrapy.Field()        # 宣讲会源id
-
->>>>>>> dev-phk
 
 class CompanyItem(scrapy.Item):
     # 关键字段
@@ -50,11 +36,8 @@ class CompanyItem(scrapy.Item):
     prop = scrapy.Field()        #公司性质
     scale = scrapy.Field()       #公司规模
     industry = scrapy.Field()    #公司性质
-<<<<<<< HEAD
-    
-=======
 
-    def __init__(self, name, intro=None, phone=None, email=None, homePage=None, addr=None, prop=None, scale=None, industry=None):
+    def __init__(self, name=None, intro=None, phone=None, email=None, homePage=None, addr=None, prop=None, scale=None, industry=None):
         super(CompanyItem, self).__init__()
         self['name'] = name
         if intro:
@@ -79,6 +62,7 @@ class CompanyItem(scrapy.Item):
 class SEUItem(CareertalkItem):
     kind = scrapy.Field()        # 宣讲会类型，这里按地点分类
     endTime = scrapy.Field()
+    company = scrapy.Field()
 
     targetAcademic = scrapy.Field()    # 目标学历
     targetMajor = scrapy.Field()    # 目标专业
@@ -187,11 +171,7 @@ class SJTUItem(CareertalkItem):
         self['infoSource'] = u'上海交通大学招聘信息服务网'
 
 
->>>>>>> dev-phk
-class NJUItem(CareertalkItem):   #南京大学
-    company = scrapy.Field()
 
-<<<<<<< HEAD
 class NUAAItem(CareertalkItem):   #南京航空航天大学
     company = scrapy.Field()
 
@@ -224,9 +204,9 @@ class ZJUItem(CareertalkItem):  #浙江大学
 
 class NJAUItem(CareertalkItem):  #南京农业大学
     company = scrapy.Field()
-=======
-    def __init__(self):
-        super(NJUItem, self).__init__()
-        self['university'] = u'南京大学'
-        self['infoSource'] = u'南京大学就业创业信息网'
->>>>>>> dev-phk
+
+class NJUItem(CareertalkItem):  #南京大学
+    company = scrapy.Field()
+
+
+

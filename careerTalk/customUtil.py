@@ -2,41 +2,29 @@
 
 import json
 import re
-<<<<<<< HEAD
 import platform
-import os
-import codecs
-import html2text
-import careerTalk.settings as ST
-class CustomUtil(object):
-
-    @staticmethod
-    def convertHtmlContent(li, idx=0):
-        if li is None:
-            return ""
-        isString = isinstance(li, basestring)
-        if isString:
-            return li
-=======
-import html2text
 import os
 import codecs
 from scrapy import log
 import time
+import html2text
 import careerTalk.settings as ST
-
 class CustomUtil(object):
+
     # 时间格式 2015-03-27 14:00
     time_pattern = r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})'
     time_format = "%Y-%m-%d %H:%M"
     # 日期格式 2015-03-24
     date_pattern = r'(\d{4}-\d{2}-\d{2})'
-    
+
     @staticmethod
     def convertHtmlContent(li, idx=0):
-        if li is None or len(li) == 0:
-            return None
->>>>>>> dev-phk
+
+        if li is None:
+            return ""
+        isString = isinstance(li, basestring)
+        if isString:
+            return li
         else:
             if len(li) == 0:
                 return ""
@@ -51,7 +39,6 @@ class CustomUtil(object):
         return s[item]
 
     @staticmethod
-<<<<<<< HEAD
     def phoneNumberRegular(content):
         phonePre = ['134','135','136','137','138','139','147','150','151','152','157','158','159','182','183','184','187','188','178',
                     '130','131','132','155','156','185','186','145','176',
@@ -118,7 +105,8 @@ class CustomUtil(object):
         item['company'] = dict(item['company']) 
         
         return item
-=======
+
+    @staticmethod
     def getFirstStr(strs):
         """
         获取字符串列表中的第一个字符串，若获取失败，则返回一个空字符串
@@ -244,16 +232,17 @@ class DoneSet(object):
         :return: doneset
         """
         # 从文本读取已获取的数据
-        filePath = cls.getDonFilePath(spider)
-        doneset = set()
-        try:
-            f = codecs.open(filePath, 'r', 'utf-8')
-            for line in f:
-                doneset.add(line.strip())
-            f.close()
-        except:
-            log.msg(u'读取'+filePath+u'失败', level=log.WARNING, spider=spider)
-        return doneset
+        # filePath = cls.getDonFilePath(spider)
+        # doneset = set()
+        # try:
+        #     f = codecs.open(filePath, 'r', 'utf-8')
+        #     for line in f:
+        #         doneset.add(line.strip())
+        #     f.close()
+        # except:
+        #     log.msg(u'读取'+filePath+u'失败', level=log.WARNING, spider=spider)
+        # return doneset
+        return CustomUtil.getDoneSet(spider.name)
 
     @classmethod
     def isInDoneSet(cls, spider, item):
@@ -272,19 +261,20 @@ class DoneSet(object):
         """
         :return: 根据item信息返回一个用于区分不同item的字符串
         """
-        sid = item.get('sid')
-        title = item.get('title')
-        startTime = item.get('startTime')
-        if sid:
-            if title:
-                return sid+'_'+title
-            else:
-                return sid+'_'
-        elif title and startTime:
-            return startTime+'_'+title
-        else:
-            log.msg('can not get the itemId , item:'+str(item), level=log.WARNING, spider=spider)
-            return item.__hash__()
+        # sid = item.get('sid')
+        # title = item.get('title')
+        # startTime = item.get('startTime')
+        # if sid:
+        #     if title:
+        #         return sid+'_'+title
+        #     else:
+        #         return sid+'_'
+        # elif title and startTime:
+        #     return startTime+'_'+title
+        # else:
+        #     log.msg('can not get the itemId , item:'+str(item), level=log.WARNING, spider=spider)
+        #     return item.__hash__()
+        return item['title']+'_'+item['sid']
 
     @classmethod
     def createDoneFile(cls, spider, keys):
@@ -303,9 +293,7 @@ class DoneSet(object):
             log.msg(spider.name+u'未添加新数据', level=log.INFO, spider=spider)
         return filePath
 
-    @classmethod
-    def getDonFilePath(cls, spider):
-        storePath = ST.MY_SETTING['STORE_PATH'] or os.path.abspath(os.path.dirname(__file__))+"/../test/"
-        return os.path.join(storePath, spider.name+"/Done.txt")
-
->>>>>>> dev-phk
+    # @classmethod
+    # def getDonFilePath(cls, spider):
+    #     storePath = ST.MY_SETTING['STORE_PATH'] or os.path.abspath(os.path.dirname(__file__))+"/../test/"
+    #     return os.path.join(storePath, spider.name+"/Done.txt")

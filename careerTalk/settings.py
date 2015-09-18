@@ -23,7 +23,6 @@ ITEM_PIPELINES = {
         #'careerTalk.pipelines.MyImagesPipeline':850,
         }
 
-<<<<<<< HEAD
 DOWNLOAD_TIMEOUT = 15
 
 MY_SETTING={
@@ -34,15 +33,7 @@ MY_SETTING={
 }
 
 IMAGES_STORE = 'E:\code\python\careerTalkData\picture'
-=======
-# 设置json文件存储路径
-MY_SETTING={
-        'version':1,
-        # 'STORE_PATH':None
-        'STORE_PATH': "/home/phk52/server/scrapyd/data/"
-}
 
->>>>>>> dev-phk
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'careerTalk (+http://www.yourdomain.com)'
 
